@@ -1,19 +1,21 @@
 {
-  "name": "nodejs",
+  "name": "matcha",
   "version": "1.0.0",
-  "description": "Nodejs Course Series ",
+  "description": "Matcha dating app ",
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js"
   },
-  "author": "Islem Penywis",
+  "author": "bngweny",
   "license": "MIT ",
   "dependencies": {
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "node": "^11.0.0",
-    "pug": "^2.0.3"
+    "mongodb": "^3.1.10",
+    "ejs": "^2.6.1",
+    "password-hash": "^1.2.2"
   },
   "devDependencies": {
     "nodemon": "^1.18.6"

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<!-- <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">	
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.css' rel='stylesheet' />
+	<style>
+		body { margin:0; padding:0; }
+		#map { position:absolute; top:0; bottom:0; width:100%; }
+		.marker {
+  background-image: url('/img/mapbox-icon3.png');
+  background-size: cover;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.mapboxgl-popup {
+  max-width: 200px;
+}
+/* #292929 */
+/* #ed5b01 ffaf06*/
+.mapboxgl-popup-content {
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+}
+	  </style>
+    <title>Profile</title>
+</head>
+<body style="background-image: url('/img/back6.jpg'); background-size: cover; overflow: hidden;">
+    <div style="width: 100%; position: absolute; z-index: -1;  height:100%; background-color:  pink; opacity: 0.8;">
+        <nav role="navigation">
+			<div class="nav-wrapper container"><a id="logo-container" href="/home" class="brand-logo">MATCHA</a>
+				<a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+				<ul id="dropdown1" class="dropdown-content">
+					<li><a href="/profile">Profile</a></li>
+					<li><a href="#!">Reset Password</a></li>
+					<li class="divider"></li>
+					<li><a href="#!">Logout</a></li>
+				</ul>
+				<ul class="right hide-on-med-and-down">
+					<li><a href="/find">Find</a></li>
+					<li><a href="#">Notifications<span class="new badge">4</span></a></li>
+					<li><a href="#">Messages<span class="new badge">4</span></a></li>
+					<li><a class="dropdown-button" href="#!" data-activates="dropdown1">Settings<i class="material-icons right">arrow_drop_down</i></a></li>
+				</ul>
+				<ul class="side-nav" id="mobile-demo">
+					<li><a href="/find">Find</a></li>
+					<li><a href="/profile">Profile</a></li>
+					<li><a href="#">Notifications<span class="new badge">4</span></a></li>
+					<li><a href="#">Settings</a></li>
+				</ul>
+				 <!-- <ul id="nav-mobile" class="sidenav">
+					
+				</ul> 
+				<a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a> -->
+			
+			</div>
+		</nav>
+		<h1 style="text-align:center">Find</h1>
+		<div id='map' style="position:relative; width:30%; height: 30%; left: 33.33%;"></div>
+		<script>
+			mapboxgl.accessToken = 'pk.eyJ1IjoiYm5nd2VueSIsImEiOiJjanBwZm1ubzkwM3RpNDNteHB1cTNjNDRmIn0.e8kvP8D0k5s08tT6OkEp8A';
+			const map = new mapboxgl.Map({
+  				container: 'map',
+  				style: 'mapbox://styles/bngweny/cjppfog102p6z2rpi2eqx7iie',
+  				center: [18.417,-33.907],
+  				zoom: 17.0
+			});
+			var geojson = {
+  				type: 'FeatureCollection',
+  				features: [{
+    				type: 'Feature',
+    				geometry: {
+      					type: 'Point',
+      					coordinates: [18.417, -33.907]
+    				},
+    				properties: {
+      					title: 'Bae?',
+      					description: 'On my phone looking for a reason to get off my phone!'
+    				}
+  				},
+  			{
+    		type: 'Feature',
+    		geometry: {
+      			type: 'Point',
+      			coordinates: [-122.414, 37.776]
+    		},
+    		properties: {
+      			title: 'Mapbox',
+      			description: 'San Francisco, California'
+    		}
+  			}]
+			};
+
+			geojson.features.forEach(function(marker) {
+
+// create a HTML element for each feature
+var el = document.createElement('div');
+el.className = 'marker';
+
+// make a marker for each feature and add to the map
+new mapboxgl.Marker(el)
+.setLngLat(marker.geometry.coordinates)
+.setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+.setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
+.addTo(map);
+});
+		</script>
+    </div>
+    <script 
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+	<script src="/js/materialize.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+	
+	<script>
+		$(".dropdown-button").dropdown();
+	$(".button-collapse").sideNav();
+	$('.carousel.carousel-slider').carousel({fullWidth: true});
+	</script>
+</body>
+</html>

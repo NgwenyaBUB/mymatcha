@@ -10,8 +10,10 @@ const bodyParser = require("body-parser");
 
 const bootstrap = require("./src/boostrap");
 
+const ejs = require('ejs');
+
 //Use a Custom Templating Engine
-app.set("view engine", "pug");
+app.set("view engine", "ejs");
 
 app.set("views", path.resolve("./src/views"));
 
@@ -29,7 +31,8 @@ bootstrap(app, router);
 
 //Main Page (Home)
 router.get("/", (req, res, next) => {
-  return res.send("Hello There");
+  // return res.send("Hello There");
+  return res.render('index');
 });
 
 router.use((err, req, res, next) => {

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<!-- <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/> -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.css' rel='stylesheet' />
+
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+		.input-field label {
+     color: white;
+   }
+   /* label focus color */
+   .input-field input[type=text]:focus + label {
+     color: white;
+   }
+
+   .input-field .prefix.active {
+     color: white;
+   }
+
+		/* #292929 */
+		/* #ed5b01 ffaf06*/
+	</style>
+	<title>Profile</title>
+</head>
+
+<body style="background-image: url('/img/back6.jpg'); background-size: cover; overflow: hidden;">
+	<div style="width: 100%; position: absolute; z-index: -1;  height:100%; background-color:  pink; opacity: 0.8;">
+		<nav role="navigation">
+			<div class="nav-wrapper container"><a id="logo-container" href="/home" class="brand-logo">MATCHA</a>
+				<a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+				<ul id="dropdown1" class="dropdown-content">
+					<li><a href="/profile">Profile</a></li>
+					<li><a href="#!">Reset Password</a></li>
+					<li class="divider"></li>
+					<li><a href="#!">Logout</a></li>
+				</ul>
+				<ul class="right hide-on-med-and-down">
+					<li><a href="/find">Find</a></li>
+					<li><a href="#">Notifications<span class="new badge">4</span></a></li>
+					<li><a href="#">Messages<span class="new badge">4</span></a></li>
+					<li><a class="dropdown-button" href="#!" data-activates="dropdown1">Settings<i class="material-icons right">arrow_drop_down</i></a></li>
+				</ul>
+				<ul class="side-nav" id="mobile-demo">
+					<li><a href="/find">Find</a></li>
+					<li><a href="/profile">Profile</a></li>
+					<li><a href="#">Notifications<span class="new badge">4</span></a></li>
+					<li><a href="#">Settings</a></li>
+				</ul>
+				<!-- <ul id="nav-mobile" class="sidenav">
+					
+				</ul> 
+				<a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a> -->
+
+			</div>
+		</nav>
+		<!-- <h1 style="text-align:center">Profile</h1> -->
+
+		<!--	<div class="row">
+			<form class="col s12">
+				<div class="row">
+					<div class="input-field col s6">
+						<input placeholder="Placeholder" id="firstname" type="text" class="validate">
+						<label for="firstname">First Name</label>
+					</div>
+				</div>
+			</form>
+		 </div> -->
+		<!-- <ul id="slide-out" class="side-nav fixed">
+				<li><a href="#!">First Sidebar Link</a></li>
+				<li><a href="#!">Second Sidebar Link</a></li>
+		</ul>
+		<a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a> -->
+		<div style="width:20%; height:100%; background-color:black; float:left;">
+			<div class="row">
+				<h1 style="text-align: center; color: white;">John Does</h1>
+			</div>
+			<div class="row">
+				<form class="col s12">
+					<div class="row">
+						<div class="input-field col s12">
+							<input placeholder="" id="first_name" type="text" class="validate">
+							<label for="first_name">First Name</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<input placeholder="" id="last_name" type="text" class="validate">
+							<label for="last_name">Last Name</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<input placeholder="" id="email" type="email" class="validate">
+							<label for="email">Email</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<select name="gender">
+								<option value="male" selected>Male</option>
+								<option value="female">Female</option>
+							</select>
+							<label>Gender</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<select name="sexual">
+								<option value="men">Men</option>
+								<option value="women">Women</option>
+								<option value="both" selected>Both</option>
+							</select>
+							<label>Sexual Preference</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<input placeholder="" id="location" type="text" class="validate">
+							<label for="last_name">Location</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="chips chips-initial"></div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div style="width: 80%; height: 100%;float: right; overflow: hidden;">
+			<div style="width: 90%; height: 20%; overflow: hidden;  margin-left:50px;  margin-top: 20px;">
+				<div class="card">
+					<div class="card-image waves-effect waves-block waves-light">
+						<img class="activator" src="/img/25.jpg" style="max-height:200px;">
+					</div>
+					<div class="card-content">
+						<span class="card-title activator grey-text text-darken-4">John Doe<i class="material-icons right">more_vert</i></span>
+						<p><a href="#">This is a link</a></p>
+					</div>
+					<div class="card-reveal">
+						<span class="card-title grey-text text-darken-4"><i class="material-icons right">close</i>Card Title</span>
+						<p>Here is some more information about this product that is only revealed once clicked on.</p>
+					</div>
+				</div>
+			</div>
+			<div style="width: 60%; height: 40%; margin-left: 80px; margin-top: 20px">
+				<div class="carousel carousel-slider">
+					<a class="carousel-item" href="#one!"><img src="https://lorempixel.com/800/400/food/1"></a>
+					<a class="carousel-item" href="#two!"><img src="https://lorempixel.com/800/400/food/2"></a>
+					<a class="carousel-item" href="#three!"><img src="https://lorempixel.com/800/400/food/3"></a>
+					<a class="carousel-item" href="#four!"><img src="https://lorempixel.com/800/400/food/4"></a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+	 crossorigin="anonymous"></script>
+	<script src="/js/materialize.js"></script>
+	<script src="/js/plugins.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+	<script>
+		$('.chips').material_chip();
+		$('.chips-initial').material_chip({
+			data: [{
+				tag: 'These',
+			}, {
+				tag: 'da',
+			}, {
+				tag: 'tags',
+			}],
+		});
+		$(".dropdown-button").dropdown();
+		$(".button-collapse").sideNav();
+		$('.carousel.carousel-slider').carousel({ fullWidth: true });
+	</script>
+</body>
+
+</html>
