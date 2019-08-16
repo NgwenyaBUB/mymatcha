@@ -7,6 +7,7 @@ exports.appRoute = router => {
   router.get("/loginpage", homeController.getLoginPage);
   router.get("/home", homeController.getHomePage);
   router.get("/find", homeController.getFindPage);
+  router.get("/profile", homeController.getProfilePage);
   router.post('/logina', userController.getUserController);
   router.post('/registera', userController.getRegisterController);
 };

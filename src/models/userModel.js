@@ -44,7 +44,7 @@ exports.register = (req) => {
       });
 }
 
-exports.login = (req) => {
+exports.login = (req, res) => {
     var succ = false;
     MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, function(err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
@@ -64,8 +64,8 @@ exports.login = (req) => {
                     // var hashedPassword = passwordHash.generate(req.body.pass, {algorithm: 'whirlpool', saltLength: 8, iterations: 1});
                     if(passwordHash.verify(req.body.pass, result[0]["password"]))
                     {
-                        console.log("yay");
-                      //  res.render('home');
+                      console.log("yay");
+                      res.render('home');
                       succ = true;
                     }
                 }

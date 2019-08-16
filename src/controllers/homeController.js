@@ -9,3 +9,7 @@ exports.getHomePage = (req, res, next) => {
   exports.getFindPage = (req, res, next) => {
     res.render("find");
   };
+
+  exports.getProfilePage = (req, res, next) => {
+    res.render("profile");
+  };

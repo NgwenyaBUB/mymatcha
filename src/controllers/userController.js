@@ -1,10 +1,10 @@
 const userModel = require("../models/userModel");
 
 exports.getUserController = (req, res, next) => {
-  const succ = userModel.login(req);
+  const succ = userModel.login(req, res);
   console.log(succ, " : done");
 //  res.render("menu", { meals });
-    res.send("done");
+    // res.send("done");
 };
 
 exports.getRegisterController = (req, res, next) => {
