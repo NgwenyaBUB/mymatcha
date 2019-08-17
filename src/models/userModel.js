@@ -74,3 +74,28 @@ exports.login = (req, res) => {
         });
     return  succ;
 }
+
+exports.getUsersWithin10km = () => {
+    var users = [];
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, function(err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+            if (err) throw err;
+            var dbo = db.db("matcha");  
+            dbo.collection("users").find().toArray(function(err, result){
+                if (err) throw err;
+                if (result.length == 0)
+                {
+                    console.log("USERNAME IS DOESN'T EXIST");
+                }
+                else
+                {
+                    for (let index = 0; index < result.length; index++) {
+                        // console.log("username: ", result[index]["username"]);
+                        console.log(result[index]);
+                    }
+                }
+                db.close();
+            });
+        });
+    return users;
+}

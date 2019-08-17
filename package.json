@@ -9,13 +9,15 @@
   "author": "bngweny",
   "license": "MIT ",
   "dependencies": {
+    "async": "^3.1.0",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
-    "express": "^4.16.4",
-    "node": "^11.0.0",
-    "mongodb": "^3.1.10",
     "ejs": "^2.6.1",
-    "password-hash": "^1.2.2"
+    "express": "^4.16.4",
+    "mongodb": "^3.1.10",
+    "node": "^11.0.0",
+    "password-hash": "^1.2.2",
+    "request": "^2.88.0"
   },
   "devDependencies": {
     "nodemon": "^1.18.6"
