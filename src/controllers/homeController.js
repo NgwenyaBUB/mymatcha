@@ -7,10 +7,11 @@ exports.getLoginPage = (req, res, next) => {
 };
 
 exports.getHomePage = (req, res, next) => {
-    // userModel.getUsersWithin10km();
+    userModel.getUsersWithin10km('home', res);
     // coordinatesModel.getLocation();
-    // res.render("home");
-    res.send(coordinatesModel.getLocation());
+    // console.log("wut");
+    // res.render("home", {data: {city: "at home"}});
+    // res.send(coordinatesModel.getLocation());
   };
 
   exports.getFindPage = (req, res, next) => {

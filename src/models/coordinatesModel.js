@@ -26,55 +26,48 @@ exports.getDistance = (pointA, pointB) => {
 }
 
 exports.getLocation = () => {
-    var location ={city:  "", longitude: 0, latitude: 0};
+  // var location = {city : "", latitude: "", longitude: ""};
     var url = 'http://api.ipstack.com/check?access_key=03cc3fd4e61ce21f0324f328b0a7e67c';
-    request.get(url, (error, response, body) => {
+    request(url, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             // console.log(body) // Print the google web page.
-            console.log(this);
+            // console.log(this);
             var obj = JSON.parse(body);
-            location.city = body.city;
-            location.latitude = body.latitude;
-            location.longitude = body.longitude;
+            // location.city = obj.city;
+            // location.latitude = obj.latitude;
+            // location.longitude = obj.longitude;
+            // console.log(location);
+            // res.send(obj);
+            res.render('home', { data: obj});
         }
     })
-    // setTimeout(2000);
-    return location;
 }
 
 exports.handler = function(req, res) {
-    async.parallels([
-      /*
-       * First external endpoint
-       */
-      function(callback) {
-        var url = "http://external1.com/api/some_endpoint";
-        request(url, function(err, response, body) {
-          // JSON body
-          if(err) { console.log(err); callback(true); return; }
-          obj = JSON.parse(body);
-          callback(false, obj);
-        });
-      },
-      /*
-       * Second external endpoint
-       */
-      function(callback) {
-        var url = "http://external2.com/api/some_endpoint";
-        request(url, function(err, response, body) {
-          // JSON body
-          if(err) { console.log(err); callback(true); return; }
-          obj = JSON.parse(body);
-          callback(false, obj);
-        });
-      },
-    ],
-    /*
-     * Collate results
-     */
-    function(err, results) {
-      if(err) { console.log(err); res.send(500,"Server Error"); return; }
-      res.send({api1:results[0], api2:results[1]});
-    }
-    );
+  // var location = {city : "", latitude: "", longitude: ""};
+  //   async.parallels([
+  //     /*
+  //      * First external endpoint
+  //      */
+  //     function(callback) {
+  //       var url = 'http://api.ipstack.com/check?access_key=03cc3fd4e61ce21f0324f328b0a7e67c';
+  //       request(url, function(err, response, body) {
+  //         // JSON body
+  //         if(err) { console.log(err); callback(true); return; }
+  //         obj = JSON.parse(body);
+  //         location.city = obj.city;
+  //           location.latitude = obj.latitude;
+  //           location.longitude = obj.longitude;
+  //         callback(false, obj);
+  //       });
+  //     },
+  //   ],
+  //   /*
+  //    * Collate results
+  //    */
+  //   function(err, results) {
+  //     if(err) { console.log(err); res.send(500,"Server Error"); return; }
+  //     // res.send({api1:results[0]});
+  //   }
+  //   );
   };

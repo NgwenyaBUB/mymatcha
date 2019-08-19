@@ -1,7 +1,8 @@
 var MongoClient = require('mongodb').MongoClient;
 var passwordHash = require('password-hash');
+const coordinatesModel = require("../models/coordinatesModel");
 
-MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, function (err, db) {
+MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
 // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
 
     if (err) throw err;
@@ -19,7 +20,7 @@ MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', 
 });
 
 exports.register = (req) => {
-    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, function(err, db) {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function(err, db) {
 // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
@@ -45,7 +46,6 @@ exports.register = (req) => {
 }
 
 exports.login = (req, res) => {
-    var succ = false;
     MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, function(err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
             if (err) throw err;
@@ -65,19 +65,19 @@ exports.login = (req, res) => {
                     if(passwordHash.verify(req.body.pass, result[0]["password"]))
                     {
                       console.log("yay");
-                      res.render('home');
-                      succ = true;
+                      //   res.render('home');
+                      coordinatesModel.getLocation(res);
                     }
                 }
                 db.close();
             });
         });
-    return  succ;
 }
 
-exports.getUsersWithin10km = () => {
+exports.getUsersWithin10km = (view, res) => {
     var users = [];
-    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, function(err, db) {
+    let req = new Promise((resolve, reject) => {
+        MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, function(err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
             if (err) throw err;
             var dbo = db.db("matcha");  
@@ -91,11 +91,14 @@ exports.getUsersWithin10km = () => {
                 {
                     for (let index = 0; index < result.length; index++) {
                         // console.log("username: ", result[index]["username"]);
-                        console.log(result[index]);
+                        // console.log(result[index]);
+                        users.push(result[index])
                     }
+                    console.log("index", users);
+                    // res.render(view, {data: users});
                 }
                 db.close();
             });
         });
-    return users;
+    });
 }
