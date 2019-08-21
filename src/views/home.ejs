@@ -43,14 +43,13 @@
 		<% if (data) { %>
 			<h1>You live in  <%= data.city %> </h1>
 		  <% } %>
-	<div style="position:relative; left:30%; width:40%; height: 20%; z-index: 5;" >
+	<div style="position:relative; left:30%; width:30%; object-fit: contain" >
 		<div class="carousel carousel-slider center" data-indicators="true">
 			<div class="carousel-fixed-item center">
 				<a class="btn waves-effect white grey-text">button</a>
 			</div>
 			<div class="carousel-item red white-text" href="#one!">
-				<h2>First Panel</h2>
-				<p class="white-text">This is your first panel</p>
+				<img style="max-height: 80%; object-fit: contain" src="<%= pics.data%>">
 			</div>
 			<div class="carousel-item amber white-text" href="#two!">
 				<h2>Second Panel</h2>

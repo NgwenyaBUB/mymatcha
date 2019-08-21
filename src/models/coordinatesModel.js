@@ -25,9 +25,10 @@ exports.getDistance = (pointA, pointB) => {
     return distanceInKmBetweenEarthCoordinates(pointA.lat, pointA.lon, pointB.lat, pointB.lon);
 }
 
-exports.getLocation = () => {
+exports.getLocation = (res, media) => {
   // var location = {city : "", latitude: "", longitude: ""};
-    var url = 'http://api.ipstack.com/check?access_key=03cc3fd4e61ce21f0324f328b0a7e67c';
+    // var url = 'http://api.ipstack.com/check?access_key=03cc3fd4e61ce21f0324f328b0a7e67c';
+    var url = 'http://ip-api.com/json';
     request(url, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             // console.log(body) // Print the google web page.
@@ -38,7 +39,8 @@ exports.getLocation = () => {
             // location.longitude = obj.longitude;
             // console.log(location);
             // res.send(obj);
-            res.render('home', { data: obj});
+            console.log("media", media[0].data);
+            res.render('home', { data: obj, pics: media[0]});
         }
     })
 }

@@ -66,7 +66,11 @@ exports.login = (req, res) => {
                     {
                       console.log("yay");
                       //   res.render('home');
-                      coordinatesModel.getLocation(res);
+                      dbo.collection("media").find(query).toArray((err, result) => {
+                        if (err) throw err;                  
+                        coordinatesModel.getLocation(res, result);
+                      }
+                      );
                     }
                 }
                 db.close();
