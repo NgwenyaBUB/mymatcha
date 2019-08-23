@@ -25,3 +25,7 @@ exports.getHomePage = (req, res, next) => {
   exports.getNotifications = (req, res, next) => {
     homeModel.notifcount(req, res);
   };
+
+  exports.readNotifications = (req, res, next) => {
+    homeModel.closenotif(req, res);
+  };

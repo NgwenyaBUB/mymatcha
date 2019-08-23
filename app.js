@@ -11,11 +11,14 @@ const bodyParser = require("body-parser");
 const bootstrap = require("./src/boostrap");
 
 const ejs = require('ejs');
+const session = require('express-session');
 
 //Use a Custom Templating Engine
 app.set("view engine", "ejs");
 
 app.set("views", path.resolve("./src/views"));
+
+app.use(session({secret: 'ssshhhhh', cookie: {}, resave: false,saveUninitialized: true}));
 
 //Request Parsing
 app.use(bodyParser.json());
@@ -26,11 +29,14 @@ app.use(router);
 
 const rootPath = path.resolve("./dist");
 app.use(express.static(rootPath));
+var sess;
 
 bootstrap(app, router);
 
 //Main Page (Home)
 router.get("/", (req, res, next) => {
+  sess = req.session;
+  sess.username = "myname its";
   // return res.send("Hello There");
   return res.render('index');
 });
