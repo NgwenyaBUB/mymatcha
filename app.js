@@ -18,7 +18,7 @@ app.set("view engine", "ejs");
 
 app.set("views", path.resolve("./src/views"));
 
-app.use(session({secret: 'ssshhhhh', cookie: {}, resave: false,saveUninitialized: true}));
+app.use(session({secret: 'ssshhhhh', cookie: {secure: false}, resave: false,saveUninitialized: true}));
 
 //Request Parsing
 app.use(bodyParser.json());

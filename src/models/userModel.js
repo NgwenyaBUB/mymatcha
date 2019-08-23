@@ -64,6 +64,7 @@ exports.login = (req, res) => {
                     // var hashedPassword = passwordHash.generate(req.body.pass, {algorithm: 'whirlpool', saltLength: 8, iterations: 1});
                     if(passwordHash.verify(req.body.pass, result[0]["password"]))
                     {
+                      req.session.username = req.body.username;
                       console.log("yay");
                       //   res.render('home');
                       dbo.collection("media").find(query).toArray((err, result) => {
