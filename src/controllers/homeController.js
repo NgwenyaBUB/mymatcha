@@ -1,6 +1,6 @@
 const userModel = require("../models/userModel");
 const coordinatesModel = require("../models/coordinatesModel");
-
+const homeModel = require("../models/homeModel");
 
 exports.getLoginPage = (req, res, next) => {
   res.render("login");
@@ -20,4 +20,8 @@ exports.getHomePage = (req, res, next) => {
 
   exports.getProfilePage = (req, res, next) => {
     res.render("profile");
+  };
+
+  exports.getNotifications = (req, res, next) => {
+    homeModel.notifcount(req, res);
   };

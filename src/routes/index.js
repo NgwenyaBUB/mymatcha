@@ -10,4 +10,5 @@ exports.appRoute = router => {
   router.get("/profile", homeController.getProfilePage);
   router.post('/logina', userController.getUserController);
   router.post('/registera', userController.getRegisterController);
+  router.get("/getNotifications", homeController.getNotifications);
 };
