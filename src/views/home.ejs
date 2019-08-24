@@ -43,16 +43,14 @@
 			</div>
 		</nav>
 		<h1 style="text-align:center">WELCOME TO MATCHA</h1>
-		<% if (data) { %>
-		<h1>You live in <%= data.city %> </h1>
-		<% } %>
+		<h1>You live in </h1><h1 id="area"></h1>
 		<div style="position:relative; left:30%; width:30%; object-fit: contain">
 			<div class="carousel carousel-slider center" data-indicators="true">
 				<div class="carousel-fixed-item center">
 					<a class="btn waves-effect white grey-text">button</a>
 				</div>
 				<div class="carousel-item red white-text" href="#one!">
-					<img style="max-height: 80%; object-fit: contain" src="<%= pics.data%>">
+					<img style="max-height: 80%; object-fit: contain" src="<%= pics[0].data%>">
 				</div>
 				<div class="carousel-item amber white-text" href="#two!">
 					<h2>Second Panel</h2>
@@ -105,7 +103,7 @@
 				type: 'GET',
 				url: '/getNotifications',
 				success: function (data) {
-					console.log("notifications", data);
+					// console.log("notifications", data);
 					$('#notif1').text(data + "");
 				}
 			});
@@ -113,7 +111,7 @@
 				type: 'GET',
 				url: '/getMessageCount',
 				success: function (data) {
-					console.log("msgcount", data);
+					// console.log("msgcount", data);
 					$('#msg1').text(data + "");
 				}
 			});
@@ -126,7 +124,7 @@
 				type: 'GET',
 				url: '/readNotifications',
 				success: function (data) {
-					console.log("done", data);
+					// console.log("done", data);
 				}
 			});
 		});
