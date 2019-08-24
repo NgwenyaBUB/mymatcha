@@ -1,25 +1,26 @@
 var MongoClient = require('mongodb').MongoClient;
 
 exports.getAllMessages = (req, res) => {
-    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true , useUnifiedTopology: true}, function (err, db) {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
-        var query = { "$or": [{
-            from: "bngweny123",
-            to: "bngweny69"
-        }, {
-            from: "bngweny69",
-            to: "bngweny123"
-        }]};
+        var query = {
+            "$or": [{
+                from: req.session.username,
+                to: req.query.username
+            }, {
+                from: req.query.username,
+                to: req.session.username
+            }]
+        };
         dbo.collection("messages").find(query).toArray(function (err, result) {
             if (err) throw err;
             if (result.length == 0) {
-                // console.log("USERNAME IS DOESN'T EXIST", result);
-                res.send("0");
+                res.send("0 "+req.query.username + " " + req.session.username);
             }
             else {
-                res.send("" + result);
+                res.send(result);
             }
             db.close();
         });
@@ -27,19 +28,17 @@ exports.getAllMessages = (req, res) => {
 }
 
 exports.getMessageCount = (req, res) => {
-    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true , useUnifiedTopology: true}, function (err, db) {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
-        var query = { to: "bngweny69", read:"false"};
+        var query = { to: "bngweny69", read: "false" };
         dbo.collection("messages").find(query).toArray(function (err, result) {
             if (err) throw err;
             if (result.length == 0) {
-                // console.log("USERNAME IS DOESN'T EXIST", result);
                 res.send("0");
             }
             else {
-                console.log("username", req.session.username);
                 res.send("" + result.length);
             }
             db.close();
@@ -47,22 +46,23 @@ exports.getMessageCount = (req, res) => {
     });
 }
 
-exports.sendMessage = (req, res) => {
-    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true , useUnifiedTopology: true}, function (err, db) {
+exports.sendMessage = (req, resp) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
-        var query = { to: "bngweny69", read:"false"};
-        dbo.collection("messages").find(query).toArray(function (err, result) {
-            if (err) throw err;
-            if (result.length == 0) {
-                // console.log("USERNAME IS DOESN'T EXIST", result);
-                res.send("0");
-            }
-            else {
-                res.send("" + result.length);
-            }
-            db.close();
+        var myobj = {
+            from: req.session.username,
+            to: req.body.to,
+            read: "false",
+            text: req.body.text,
+            timestamp: Math.floor(Date.now() / 1000)
+        };
+        dbo.collection("messages").insertOne(myobj, function (err, res) {
+            if (err) { console.log("yeah reconnect bru"); throw err; }
+            console.log("1 document inserted");
+            resp.sendStatus(200);
         });
+        db.close();
     });
 }

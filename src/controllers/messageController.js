@@ -7,3 +7,7 @@ exports.getMessages = (req, res, next) => {
   exports.getMessageCount = (req, res, next) => {
     msgModel.getMessageCount(req, res);
   };
+
+  exports.sendMessage = (req, res, next) => {
+    msgModel.sendMessage(req, res);
+  };

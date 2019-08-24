@@ -25,7 +25,7 @@ exports.getDistance = (pointA, pointB) => {
     return distanceInKmBetweenEarthCoordinates(pointA.lat, pointA.lon, pointB.lat, pointB.lon);
 }
 
-exports.getLocation = (res, media) => {
+exports.getLocation = (req, request) => {
   // var location = {city : "", latitude: "", longitude: ""};
     // var url = 'http://api.ipstack.com/check?access_key=03cc3fd4e61ce21f0324f328b0a7e67c';
     var url = 'http://ip-api.com/json';
@@ -39,37 +39,7 @@ exports.getLocation = (res, media) => {
             // location.longitude = obj.longitude;
             // console.log(location);
             // res.send(obj);
-            console.log("media", media[0].data);
-            res.render('home', { data: obj, pics: media[0]});
+            req.session.location = obj;
         }
     })
 }
-
-exports.handler = function(req, res) {
-  // var location = {city : "", latitude: "", longitude: ""};
-  //   async.parallels([
-  //     /*
-  //      * First external endpoint
-  //      */
-  //     function(callback) {
-  //       var url = 'http://api.ipstack.com/check?access_key=03cc3fd4e61ce21f0324f328b0a7e67c';
-  //       request(url, function(err, response, body) {
-  //         // JSON body
-  //         if(err) { console.log(err); callback(true); return; }
-  //         obj = JSON.parse(body);
-  //         location.city = obj.city;
-  //           location.latitude = obj.latitude;
-  //           location.longitude = obj.longitude;
-  //         callback(false, obj);
-  //       });
-  //     },
-  //   ],
-  //   /*
-  //    * Collate results
-  //    */
-  //   function(err, results) {
-  //     if(err) { console.log(err); res.send(500,"Server Error"); return; }
-  //     // res.send({api1:results[0]});
-  //   }
-  //   );
-  };
