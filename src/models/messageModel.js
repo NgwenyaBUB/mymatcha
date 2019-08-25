@@ -17,7 +17,7 @@ exports.getAllMessages = (req, res) => {
         dbo.collection("messages").find(query).toArray(function (err, result) {
             if (err) throw err;
             if (result.length == 0) {
-                res.send("0 "+req.query.username + " " + req.session.username);
+                res.send("0 " + req.query.username + " " + req.session.username);
             }
             else {
                 res.send(result);
@@ -65,4 +65,29 @@ exports.sendMessage = (req, resp) => {
         });
         db.close();
     });
+}
+
+exports.getChat = (req, res) => {
+
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.session.username };
+        dbo.collection("users").find(query).toArray((err, result1) => {
+            var myusers;
+            var mymedia;
+            if (err) throw err;
+            myusers = result1;
+            dbo.collection("media").find().toArray((err, result) => {
+                if (err) throw err;
+                mymedia = result;
+                console.log('userd', myusers);
+                console.log('media', mymedia);
+                db.close();
+                res.send({ users: myusers, media: mymedia });
+            });
+        });
+    });
+    // res.render('chat');
 }

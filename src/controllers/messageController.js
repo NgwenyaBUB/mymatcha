@@ -11,3 +11,7 @@ exports.getMessages = (req, res, next) => {
   exports.sendMessage = (req, res, next) => {
     msgModel.sendMessage(req, res);
   };
+
+  exports.getChat = (req, res, next) => {
+    msgModel.getChat(req, res);
+  }

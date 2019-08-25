@@ -43,27 +43,16 @@
 			</div>
 		</nav>
 		<h1 style="text-align:center">WELCOME TO MATCHA</h1>
-		<h1>You live in </h1><h1 id="area"></h1>
 		<div style="position:relative; left:30%; width:30%; object-fit: contain">
 			<div class="carousel carousel-slider center" data-indicators="true">
 				<div class="carousel-fixed-item center">
 					<a class="btn waves-effect white grey-text">button</a>
 				</div>
-				<div class="carousel-item red white-text" href="#one!">
-					<img style="max-height: 80%; object-fit: contain" src="<%= pics[0].data%>">
+				<% for(var i=0; i < pics.length; i++) { %>
+				<div class="carousel-item blue lighten-1 white-text" href="#one!">
+					<img style="max-height: 80%;" src="<%= pics[i].data%>">
 				</div>
-				<div class="carousel-item amber white-text" href="#two!">
-					<h2>Second Panel</h2>
-					<p class="white-text">This is your second panel</p>
-				</div>
-				<div class="carousel-item green white-text" href="#three!">
-					<h2>Third Panel</h2>
-					<p class="white-text">This is your third panel</p>
-				</div>
-				<div class="carousel-item blue white-text" href="#four!">
-					<h2>Fourth Panel</h2>
-					<p class="white-text">This is your fourth panel</p>
-				</div>
+				<% } %>
 			</div>
 		</div>
 
