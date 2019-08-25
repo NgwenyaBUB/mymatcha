@@ -57,8 +57,8 @@ exports.login = (req, res) => {
                 console.log("USERNAME IS DOESN'T EXIST");
             }
             else {
-                console.log("username: ", result[0]["username"]);
-                console.log("password: ", req.body.pass);
+                // console.log("username: ", result[0]["username"]);
+                // console.log("password: ", req.body.pass);
                 // var hashedPassword = passwordHash.generate(req.body.pass, {algorithm: 'whirlpool', saltLength: 8, iterations: 1});
                 if (passwordHash.verify(req.body.pass, result[0]["password"])) {
                     req.session.username = req.body.username;
@@ -67,7 +67,7 @@ exports.login = (req, res) => {
                     dbo.collection("media").find(query).toArray((err, result) => {
                         if (err) throw err;
                         // coordinatesModel.getLocation(res, result);
-                        console.log(result);
+                        // console.log(result);
                         res.render('home', {pics: result});
                     }
                     );
