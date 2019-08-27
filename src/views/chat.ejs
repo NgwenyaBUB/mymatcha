@@ -11,7 +11,7 @@
     <title>Messages</title>
 </head>
 
-<body style="background-image: url('/img/back6.jpg'); background-size: cover; overflow: hidden;">
+<body style="background-image: url('/img/back6.jpg');  background-size: cover; overflow: hidden;">
     <div style="width: 100%; position: absolute; z-index: -1;  height:100%; background-color:  pink; opacity: 0.8;">
         <nav role="navigation">
             <div class="nav-wrapper container"><a id="logo-container" href="/home" class="brand-logo"> MATCHA</a>
@@ -25,7 +25,7 @@
                 <ul class="right hide-on-med-and-down">
                     <li><a href="/find">Find</a></li>
                     <li><a href="#" id="notiflnk">Notifications<span class="new badge" id="notif1">0</span></a></li>
-                    <li><a href="#">Messages<span class="new badge" id="msg1">4</span></a></li>
+                    <li><a href="/chat">Messages<span class="new badge" id="msg1">4</span></a></li>
                     <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Settings<i
                                 class="material-icons right">arrow_drop_down</i></a></li>
                 </ul>
@@ -45,17 +45,18 @@
         <h1 style="text-align:center">Messages</h1>
         <div id="chat" class="row">
             <div class="col s4">
-            <% for(var i=0; i < users.length; i++) { %>
+                <% for(var i=0; i < users.length; i++) { %>
                 <div class="row">
                     <div class="col s12">
                         <ul class="collection">
                             <li class="collection-item avatar">
-                                <img src="images/yuna.jpg" alt="" class="circle">
-                                <span class="title">users[i].name</span>
+                                <img src="<%= media[users[i]].data%>" alt="" class="circle">
+                                <span class="title"><%=users[i]%></span>
                                 <p>First Line 1<br>
                                     Second Line
                                 </p>
-                                <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
+                                <a href="#!" class="secondary-content" id="click<%=users[i]%>"><i
+                                        class="material-icons">grade</i></a>
                             </li>
                         </ul>
                     </div>
@@ -63,8 +64,9 @@
                 <% } %>
             </div>
 
-            <div class="col s7  red lighten-5">
-                <div class="row">
+            <div class="col s7  red lighten-5" style="max-height: 800px; overflow-y: scroll;">
+                <div class="row" id="msgpanel">
+                    <!-- <div class="row">
                     <div class="card-panel teal">
                         <span class="white-text">I am a very simple card. I am good at containing small bits of
                             information.
@@ -72,34 +74,16 @@
                             called a panel in other frameworks.
                         </span>
                     </div>
+                </div> -->
                 </div>
                 <div class="row">
-                    <div class="card-panel blue-grey">
-                        <span class="white-text">I am a very simple card. I am good at containing small bits of
-                            information.
-                            I am convenient because I require little markup to use effectively. I am similar to what is
-                            called a panel in other frameworks.
-                        </span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="card-panel blue-grey">
-                        <span class="white-text">I am a very simple card. I am good at containing small bits of
-                            information.
-                            I am convenient because I require little markup to use effectively. I am similar to what is
-                            called a panel in other frameworks.
-                        </span>
-                    </div>
-                </div>
-                <div class="row">
-
                     <div class="input-field col s8">
                         <textarea id="text" class="materialize-textarea black-text"></textarea>
                         <label for="text">Text</label>
                     </div>
 
                     <div class="col s4">
-                        <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+                        <button class="btn waves-effect" type="submit" id="btnsend" name="action">Send
                             <i class="material-icons right">send</i>
                         </button>
                     </div>
@@ -120,6 +104,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
     <script>
+        var t;
+        var user = "";
+        var numMsgs = 0;
         // 		(function($){
         //   $(function(){
 
@@ -139,6 +126,108 @@
         // });
         $(".dropdown-button").dropdown();
         $(".button-collapse").sideNav();
+
+        function addMessage(color, align, text) {
+            $("#msgpanel").append('<div class="row"> <div class="card-panel ' + color + align + '"> <span class="black-text ">' + text + '</span> </div> </div>');
+        }
+
+        function msgPoll() {
+            if (user) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/getMessages?username=' + user,
+                    success: (data) => {
+                        let count = 0;
+                        for (const iterator of data) {
+                            count = count + 1;
+                        }
+                        if (count > numMsgs) {
+                            for (let index = numMsgs; index < count; index++) {
+                                console.log(index, data[index]);
+                                let color = "light-blue darken-1 ";
+                                let align = "right-align";
+                                if (data[index].from == user) {
+                                    color = "blue-grey lighten-3 ";
+                                    align = "left-align";
+                                }
+                                addMessage(color, align, data[index].text);
+                            }
+                            numMsgs = count;
+                        }
+                    }
+                });
+            }
+        }
+
+        "<% for(var i=0; i < users.length; i++) { %>"
+        $("#click<%=users[i]%>").on("click", () => {
+            clearInterval(t);
+            user = "<%=users[i]%>";
+            $("#msgpanel").empty();
+            $.ajax({
+                type: 'GET',
+                url: '/getMessages?username=<%=users[i]%>',
+                success: (data) => {
+                    numMsgs = 0;
+                    for (const iterator of data) {
+                        numMsgs = numMsgs + 1;
+                        let color = "light-blue darken-1 ";
+                        let align = "right-align";
+                        if (iterator.from == "<%=users[i]%>") {
+                            color = "blue-grey lighten-3 ";
+                            align = "left-align";
+                        }
+                        addMessage(color, align, iterator.text);
+                        t = setInterval(msgPoll, 3000);
+                    }
+                }
+            });
+            console.log("yo");
+        });
+        "<% } %>"
+
+        $("#btnsend").on("click", () => {
+            let msg = $("#text").val();
+            $("#text").val("");
+            if (user != "" && msg != "") {
+                $.ajax({
+                    type: 'POST',
+                    url: '/sendMessage',
+                    data: JSON.stringify({
+                        "to": user,
+                        "text": msg
+                    }),
+                    'processData': false,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: () => { },
+                    failure: (errMsg) => {
+                        console.log("data", errMsg);
+                    }
+                });
+            }
+        });
+
+        function polling() {
+            $.ajax({
+                type: 'GET',
+                url: '/getNotifications',
+                success: function (data) {
+                    // console.log("notifications", data);
+                    $('#notif1').text(data + "");
+                }
+            });
+            $.ajax({
+                type: 'GET',
+                url: '/getMessageCount',
+                success: function (data) {
+                    // console.log("msgcount", data);
+                    $('#msg1').text(data + "");
+                }
+            });
+        }
+
+        $(document).ready(setInterval(polling, 3000));
     </script>
 
 

@@ -32,7 +32,7 @@ exports.getMessageCount = (req, res) => {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
-        var query = { to: "bngweny69", read: "false" };
+        var query = { to: req.session.username, read: "false" };
         dbo.collection("messages").find(query).toArray(function (err, result) {
             if (err) throw err;
             if (result.length == 0) {
@@ -76,16 +76,18 @@ exports.getChat = (req, res) => {
         var query = { username: req.session.username };
         dbo.collection("users").find(query).toArray((err, result1) => {
             var myusers;
-            var mymedia;
+            var mymedia = {};
             if (err) throw err;
             myusers = result1;
             dbo.collection("media").find().toArray((err, result) => {
                 if (err) throw err;
-                mymedia = result;
-                console.log('userd', myusers);
-                console.log('media', mymedia);
+                for (const iterator of result) {
+                    mymedia[iterator.username] = iterator;
+                }
+                // console.log('userd', myusers[0].connected);
+                // console.log('media', mymedia);
                 db.close();
-                res.send({ users: myusers, media: mymedia });
+                res.render('chat',  { users: myusers[0].connected, media: mymedia });
             });
         });
     });
