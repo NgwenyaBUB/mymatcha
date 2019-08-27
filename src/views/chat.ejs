@@ -25,7 +25,7 @@
                 <ul class="right hide-on-med-and-down">
                     <li><a href="/find">Find</a></li>
                     <li><a href="#" id="notiflnk">Notifications<span class="new badge" id="notif1">0</span></a></li>
-                    <li><a href="#">Messages<span class="new badge" id="msg1">4</span></a></li>
+                    <li><a href="/chat">Messages<span class="new badge" id="msg1">4</span></a></li>
                     <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Settings<i
                                 class="material-icons right">arrow_drop_down</i></a></li>
                 </ul>
@@ -50,12 +50,12 @@
                     <div class="col s12">
                         <ul class="collection">
                             <li class="collection-item avatar">
-                                <img src="images/yuna.jpg" alt="" class="circle">
-                                <span class="title">users[i].name</span>
+                                <img src="<%= media[users[i]].data%>" alt="" class="circle">
+                                <span class="title"><%=users[i]%></span>
                                 <p>First Line 1<br>
                                     Second Line
                                 </p>
-                                <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
+                                <a href="#!" class="secondary-content" id="click<%=users[i]%>"><i class="material-icons">grade</i></a>
                             </li>
                         </ul>
                     </div>
@@ -63,8 +63,9 @@
                 <% } %>
             </div>
 
-            <div class="col s7  red lighten-5">
-                <div class="row">
+            <div class="col s7  red lighten-5" >
+                <div class="row" id="msgpanel">
+                <!-- <div class="row">
                     <div class="card-panel teal">
                         <span class="white-text">I am a very simple card. I am good at containing small bits of
                             information.
@@ -72,24 +73,7 @@
                             called a panel in other frameworks.
                         </span>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="card-panel blue-grey">
-                        <span class="white-text">I am a very simple card. I am good at containing small bits of
-                            information.
-                            I am convenient because I require little markup to use effectively. I am similar to what is
-                            called a panel in other frameworks.
-                        </span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="card-panel blue-grey">
-                        <span class="white-text">I am a very simple card. I am good at containing small bits of
-                            information.
-                            I am convenient because I require little markup to use effectively. I am similar to what is
-                            called a panel in other frameworks.
-                        </span>
-                    </div>
+                </div> -->
                 </div>
                 <div class="row">
 
@@ -99,7 +83,7 @@
                     </div>
 
                     <div class="col s4">
-                        <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+                        <button class="btn waves-effect" type="submit" id="btnsend" name="action">Send
                             <i class="material-icons right">send</i>
                         </button>
                     </div>
@@ -120,6 +104,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
     <script>
+        var t;
+        var user = "";
         // 		(function($){
         //   $(function(){
 
@@ -139,6 +125,54 @@
         // });
         $(".dropdown-button").dropdown();
         $(".button-collapse").sideNav();
+
+        "<% for(var i=0; i < users.length; i++) { %>"
+        $("#click<%=users[i]%>").on("click", ()=>{
+            $("#msgpanel").empty();
+            $.ajax({
+                type: 'GET',
+                url: '/getMessages?username=<%=users[i]%>',
+                success: (data) => {
+                    for (const iterator of data) {
+                        let color = "light-blue accent-3 ";
+                        let align = "right-align";
+                        if (iterator.from == "<%=users[i]%>")
+                        {
+                            color = "blue-grey ";
+                            align = "left-align";
+                        }
+                        $("#msgpanel").append('<div class="row"> <div class="card-panel ' + color +align +'"> <span class="white-text ">' +iterator.text+ '</span> </div> </div>');
+                    }
+                }
+            });
+                console.log("yo");
+        });
+        "<% } %>"
+
+        $("#btnsend").on("click", ()=>{
+
+        });
+        
+        function polling() {
+			$.ajax({
+				type: 'GET',
+				url: '/getNotifications',
+				success: function (data) {
+					// console.log("notifications", data);
+					$('#notif1').text(data + "");
+				}
+			});
+			$.ajax({
+				type: 'GET',
+				url: '/getMessageCount',
+				success: function (data) {
+					// console.log("msgcount", data);
+					$('#msg1').text(data + "");
+				}
+			});
+		}
+
+		$(document).ready(setInterval(polling, 3000));
     </script>
 
 
