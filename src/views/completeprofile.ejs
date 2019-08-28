@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/tags.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+	<!-- <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/> -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- <link href="/fonts/roboto" rel="stylesheet"> -->
+    <title>Document</title>
+</head>
+<body style="background-image: url('/img/back6.jpg'); overflow: hidden; background-size: cover; -ms-background-size: cover; -o-background-size: cover; -moz-background-size: cover; -webkit-background-size: cover;">
+    <div style="width: 100%; position:absolute; z-index: -1;  height:200%; top:0%; background-color:  pink; opacity: 0.8;">
+        <!-- <div class="limiter"> -->
+            <!-- <div class="container-login100"> -->
+                <!-- <div class="login100-more" style="background-image: url('/img/back3.jpg');"></div> -->
+            <!-- </div> -->
+        <!-- </div> -->
+
+        <div style="background: rgba(240, 239, 239, 0.5); position:relative; left:25%; top: 5%; width: 50%; height: 40%; overflow-y: auto;">
+            <h1 style="text-align: center;">Complete Profile</h1>
+            <form action="/completea" method="POST">
+
+                <div class="input-field col s12">
+                    <select name="gender">
+                        <option value="" disabled selected>Choose your Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                    <label>Gender</label>
+                </div>
+
+                <br/>
+
+                <div class="input-field col s12">
+                    <select name="sexual">
+                        <option value="" disabled selected>What is your sexual preference</option>
+                        <option value="men">Men</option>
+                        <option value="women">Women</option>
+                        <option value="both">Both</option>
+                    </select>
+                    <label>Sexual Preference</label>
+                </div>
+
+                <br/>
+            <!-- <p style="color: black;">Say something about yourself:</p> -->
+            <!-- <textarea name="bio" class="form-control" placeholder="Who are you?" required></textarea> -->
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <textarea id="bio1" name="bio" class="materialize-textarea"></textarea>
+                    <label >Say something about yourself:</label>
+                </div>
+            </div>
+
+            <br/>
+            <!-- <input type="text" class="tags-input" data-name="tags-input" id="tag" name="tags" placeholder="add tag"> -->
+            <div class="tags-input" data-name="tagsinput" id="tag"></div>
+            <a href="#" id="addit">add tag</a>
+            <br/>
+            <br/>
+
+
+            <!-- <p>Select images: </p><input type="file" name="img" multiple> -->
+            <div class="file-field input-field">
+                    <div class="btn">
+                      <span>Images</span>
+                      <input type="file">
+                    </div>
+                    <div class="file-path-wrapper">
+                      <input class="file-path validate" name="picture" type="text">
+                    </div>
+                  </div>
+
+            <br/>
+            <!-- <a href="#" id="location">Show Location?</a> -->
+            <!-- <p id="cords"><p> -->
+            <div class="row">
+                <div class="col s12">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">location_on</i>
+                            <input type="text" id="autocomplete-input" name="location" class="autocomplete">
+                            <label for="autocomplete-input">Location</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+                    <i class="material-icons right">send</i>
+            </button>
+        </form>
+        </div>
+    </div>
+    <p id="test"></p>
+    <script>
+        
+    /*    document.getElementById("location").addEventListener('click', getLocation());
+        var x = document.getElementById("cords");
+        function getLocation() {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+          } 
+        }
+        
+        function showPosition(position) {
+          x.innerHTML = "Latitude: " + position.coords.latitude + 
+          "<br>Longitude: " + position.coords.longitude;
+        }*/
+        </script>
+    <script src="/js/tags.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>   -->
+    <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+    <script src="js/materialize.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            $('select').material_select();
+        })
+    </script>
+
+   
+</body>
+</html>
