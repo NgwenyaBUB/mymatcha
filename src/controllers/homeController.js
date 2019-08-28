@@ -10,12 +10,14 @@ exports.getHomePage = (req, res, next) => {
     // userModel.getUsersWithin10km('home', res);
     // coordinatesModel.getLocation();
     // console.log("wut");
-    res.render("home", {data: {city: "at home"}});
+    // res.render("home", {data: {city: "at home"}});
     // res.send(coordinatesModel.getLocation());
+    userModel.homeMedia(req, res, req.session.username);
   };
 
   exports.getFindPage = (req, res, next) => {
-    res.render("find");
+    // res.render("find");
+    userModel.getUsersWithin10km(req, res);
   };
 
   exports.getProfilePage = (req, res, next) => {
@@ -29,3 +31,7 @@ exports.getHomePage = (req, res, next) => {
   exports.readNotifications = (req, res, next) => {
     homeModel.closenotif(req, res);
   };
+
+  exports.completeprofile = (req, res, next) => {
+    res.render('completeprofile');
+  }

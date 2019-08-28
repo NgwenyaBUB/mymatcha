@@ -25,7 +25,7 @@ exports.register = (req, res) => {
         if (err) throw err;
         var dbo = db.db("matcha");
         var hashedPassword = passwordHash.generate(req.body.pass, { algorithm: 'whirlpool', saltLength: 8, iterations: 1 });
-        var myobj = { name: req.body.fname, surname: req.body.lname, email: req.body.email, username: req.body.username, password: hashedPassword };
+        var myobj = { name: req.body.fname, surname: req.body.lname, email: req.body.email, username: req.body.username, password: hashedPassword, connected: [], viewed: [], liked: [], additional: {} };
         var query = { username: req.body.username };
         dbo.collection("users").find(query).toArray(function (err, result) {
             if (err) throw err;
@@ -45,8 +45,24 @@ exports.register = (req, res) => {
     });
 }
 
+exports.homeMedia = (req, res, username) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, (err, db) => {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username };
+        dbo.collection("media").find(query).toArray((err, result) => {
+            if (err) throw err;
+            // coordinatesModel.getLocation(res, result);
+            // console.log(result);
+            res.render('home', { pics: result });
+        });
+        db.close();
+    });
+}
+
 exports.login = (req, res) => {
-    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, function (err, db) {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, (err, db) => {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
@@ -63,14 +79,7 @@ exports.login = (req, res) => {
                 if (passwordHash.verify(req.body.pass, result[0]["password"])) {
                     req.session.username = req.body.username;
                     //   console.log("yay");
-                    //   res.render('home');
-                    dbo.collection("media").find(query).toArray((err, result) => {
-                        if (err) throw err;
-                        // coordinatesModel.getLocation(res, result);
-                        // console.log(result);
-                        res.render('home', {pics: result});
-                    }
-                    );
+                    exports.homeMedia(req, res, req.body.username);
                 }
             }
             db.close();
@@ -92,9 +101,11 @@ exports.getUsersWithin10km = (req, res) => {
             }
             else {
                 for (let index = 0; index < result.length; index++) {
-                    users.push(result[index])
+                    if (req.session.username != result[index].username) {
+                        users.push(result[index]); 
+                    }
                 }
-                res.send(users);
+                res.render('find', {users: users});
             }
             db.close();
         });
