@@ -17,7 +17,7 @@ exports.getAllMessages = (req, res) => {
         dbo.collection("messages").find(query).toArray(function (err, result) {
             if (err) throw err;
             if (result.length == 0) {
-                res.send("0 " + req.query.username + " " + req.session.username);
+                res.send([]);
             }
             else {
                 res.send(result);
