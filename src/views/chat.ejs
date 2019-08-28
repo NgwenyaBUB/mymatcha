@@ -137,13 +137,9 @@
                     type: 'GET',
                     url: '/getMessages?username=' + user,
                     success: (data) => {
-                        let count = 0;
-                        for (const iterator of data) {
-                            count = count + 1;
-                        }
+                        let count = data.length;
                         if (count > numMsgs) {
                             for (let index = numMsgs; index < count; index++) {
-                                console.log(index, data[index]);
                                 let color = "light-blue darken-1 ";
                                 let align = "right-align";
                                 if (data[index].from == user) {
@@ -178,11 +174,10 @@
                             align = "left-align";
                         }
                         addMessage(color, align, iterator.text);
-                        t = setInterval(msgPoll, 3000);
                     }
+                    t = setInterval(msgPoll, 4000);
                 }
             });
-            console.log("yo");
         });
         "<% } %>"
 
@@ -202,32 +197,32 @@
                     dataType: "json",
                     success: () => { },
                     failure: (errMsg) => {
-                        console.log("data", errMsg);
+                        alert("Something Went Wrong. Opps");
                     }
                 });
             }
         });
 
-        function polling() {
-            $.ajax({
-                type: 'GET',
-                url: '/getNotifications',
-                success: function (data) {
-                    // console.log("notifications", data);
-                    $('#notif1').text(data + "");
-                }
-            });
-            $.ajax({
-                type: 'GET',
-                url: '/getMessageCount',
-                success: function (data) {
-                    // console.log("msgcount", data);
-                    $('#msg1').text(data + "");
-                }
-            });
-        }
+        // function polling() {
+        //     $.ajax({
+        //         type: 'GET',
+        //         url: '/getNotifications',
+        //         success: function (data) {
+        //             // console.log("notifications", data);
+        //             $('#notif1').text(data + "");
+        //         }
+        //     });
+        //     $.ajax({
+        //         type: 'GET',
+        //         url: '/getMessageCount',
+        //         success: function (data) {
+        //             // console.log("msgcount", data);
+        //             $('#msg1').text(data + "");
+        //         }
+        //     });
+        // }
 
-        $(document).ready(setInterval(polling, 3000));
+        // $(document).ready(setInterval(polling, 3000));
     </script>
 
 
