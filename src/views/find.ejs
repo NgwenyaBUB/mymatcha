@@ -32,8 +32,26 @@
 			cursor: pointer;
 		}
 
+		.marker2 {
+			background-image: url('/img/mapbox-icon4.png');
+			background-size: cover;
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			cursor: pointer;
+		}
+
+		.me {
+			background-image: url('/img/mapbox-icon.png');
+			background-size: cover;
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			cursor: pointer;
+		}
+
 		.mapboxgl-popup {
-			max-width: 200px;
+			max-width: 300px;
 		}
 
 		/* #292929 */
@@ -59,15 +77,15 @@
 				</ul>
 				<ul class="right hide-on-med-and-down">
 					<li><a href="/find">Find</a></li>
-					<li><a href="#">Notifications<span class="new badge">4</span></a></li>
-					<li><a href="/chat">Messages<span class="new badge">4</span></a></li>
+					<li><a href="#">Notifications<span class="new badge">0</span></a></li>
+					<li><a href="/chat">Messages<span class="new badge">0</span></a></li>
 					<li><a class="dropdown-button" href="#!" data-activates="dropdown1">Settings<i
 								class="material-icons right">arrow_drop_down</i></a></li>
 				</ul>
 				<ul class="side-nav" id="mobile-demo">
 					<li><a href="/find">Find</a></li>
 					<li><a href="/profile">Profile</a></li>
-					<li><a href="#">Notifications<span class="new badge">4</span></a></li>
+					<li><a href="#">Notifications<span class="new badge">0</span></a></li>
 					<li><a href="#">Settings</a></li>
 				</ul>
 				<!-- <ul id="nav-mobile" class="sidenav">
@@ -78,14 +96,19 @@
 			</div>
 		</nav>
 		<h1 style="text-align:center">Find</h1>
-		<div id='map' style="position:relative; width:30%; height: 30%; left: 33.33%;"></div>
+		<div class="row">
+			<div class="col s5">
+				<button>Map View</button>
+			</div>
+		</div>
+		<div id='map' style="position:relative; width:80%; height: 80%; left: 10%;"></div>
 		<script>
 			mapboxgl.accessToken = 'pk.eyJ1IjoiYm5nd2VueSIsImEiOiJjanBwZm1ubzkwM3RpNDNteHB1cTNjNDRmIn0.e8kvP8D0k5s08tT6OkEp8A';
 			const map = new mapboxgl.Map({
 				container: 'map',
 				style: 'mapbox://styles/bngweny/cjppfog102p6z2rpi2eqx7iie',
-				center: [18.417, -33.907],
-				zoom: 17.0
+				center: ["<%=me.additional.longitude%>", "<%=me.additional.latitude%>"],
+				zoom: 14.0
 			});
 			var peoples = [];
 			"<% for(var i=0; i < users.length; i++) { %>"
@@ -97,10 +120,23 @@
 					},
 					properties: {
 						title: '<%=users[i].username%>',
-						description: '<%=users[i].additional.bio%>'
+						description: '<%=users[i].additional.bio%>',
+						gender: '<%=users[i].additional.gender%>'
 					}
 				});
 				"<% } %>"
+			peoples.push({
+				type: 'Feature',
+					geometry: {
+						type: 'Point',
+						coordinates: ["<%=me.additional.longitude%>", "<%=me.additional.latitude%>"]
+					},
+					properties: {
+						title: '<%=me.username%>',
+						description: 'Me',
+						gender: 'me'
+					}
+			});
 			var geojson = {
 				type: 'FeatureCollection',
 				features: peoples
@@ -132,10 +168,18 @@
 			};
 			
 			geojson.features.forEach(function (marker) {
-
+				console.log(marker);
 				// create a HTML element for each feature
 				var el = document.createElement('div');
-				el.className = 'marker';
+				if (marker.properties.gender == "male")
+				{
+					el.className = 'marker2';
+				}
+				else if (marker.properties.gender == "me") {
+					el.className = 'me';
+				}else {
+					el.className = 'marker';
+				}
 
 				// make a marker for each feature and add to the map
 				new mapboxgl.Marker(el)

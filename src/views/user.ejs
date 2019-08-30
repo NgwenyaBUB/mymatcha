@@ -31,7 +31,7 @@
 		/* #292929 */
 		/* #ed5b01 ffaf06*/
 	</style>
-	<title>Profile</title>
+	<title>User</title>
 </head>
 
 <body style="background-image: url('/img/back6.jpg'); background-size: cover; overflow: hidden;">
@@ -85,28 +85,28 @@
 		<div class="row">
 			<div class="col s4 black" style="min-height: 100vh;">
 				<form>
-					<h1 style="text-align: center; color: white;"><%=me.name%> <%=me.surname%></h1>
+					<h1 style="text-align: center; color: white;">help</h1>
 					<div class="row">
 						<div class="input-field col s12 white-text">
-							<input placeholder="" id="first_name" type="text" class="validate" value="<%=me.name%>">
+							<input placeholder="" id="first_name" type="text" class="validate">
 							<label for="first_name">First Name</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s12 white-text">
-							<input placeholder="" id="last_name" type="text" class="validate" value="<%=me.surname%>">
+							<input placeholder="" id="last_name" type="text" class="validate">
 							<label for="last_name">Last Name</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s12 white-text">
-							<input placeholder="" id="email" type="email" class="validate" value="<%=me.email%>">
+							<input placeholder="" id="email" type="email" class="validate">
 							<label for="email">Email</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s12 white-text">
-							<input placeholder="" id="username" type="text" class="validate" value="<%=me.username%>">
+							<input placeholder="" id="username" type="text" class="validate">
 							<label for="username">Username</label>
 						</div>
 					</div>
@@ -145,39 +145,21 @@
 					<h1 class="center-align">Profile</h1>
 				</div>
 
+				<!-- add cards with pictures -->
 				<div class="row">
-					<div class="input-field">
-						<select name="gender">
-							<option value="" disabled selected>Choose your Gender</option>
-							<option value="male">Male</option>
-							<option value="female">Female</option>
-						</select>
-						<label>Gender</label>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="input-field col s12">
-						<select name="sexual">
-							<option value="" disabled selected>What is your sexual preference</option>
-							<option value="men">Men</option>
-							<option value="women">Women</option>
-							<option value="both">Both</option>
-						</select>
-						<label>Sexual Preference</label>
-					</div>
-				</div>
-				<div class="row">
-					<div class="input-field col s12">
-						<textarea id="bio1" name="bio" class="materialize-textarea"></textarea>
-						<label>Say something about yourself:</label>
-					</div>
-				</div>
-				<div class="row">
-					<div class="input-field col s12">
-						<i class="material-icons prefix">location_on</i>
-						<input type="text" id="autocomplete-input" name="location" class="autocomplete">
-						<label for="autocomplete-input">Location</label>
+					<div class="col s12 m6">
+						<div class="card">
+							<div class="card-image">
+								<img src="/img/back9.jpeg">
+								<span class="card-title">Card Title</span>
+								<a class="btn-floating halfway-fab waves-effect waves-light red"><i
+										class="material-icons">add</i></a>
+							</div>
+							<div class="card-content">
+								<p>I am a very simple card. I am good at containing small bits of information. I am
+									convenient because I require little markup to use effectively.</p>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -195,15 +177,15 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
 	<script>
-		var tags = [];
-		"<% for(var i=0; i < me.additional.tags.length; i++) { %>"
-				tags.push({
-					tag: "<%=me.additional.tags[i]%>"
-				});
-				"<% } %>"
 		$('.chips').material_chip();
 		$('.chips-initial').material_chip({
-			data: tags,
+			data: [{
+				tag: 'These',
+			}, {
+				tag: 'da',
+			}, {
+				tag: 'tags',
+			}],
 		});
 		$(".dropdown-button").dropdown();
 		$(".button-collapse").sideNav();
