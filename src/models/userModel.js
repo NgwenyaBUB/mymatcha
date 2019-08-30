@@ -89,6 +89,7 @@ exports.login = (req, res) => {
 
 exports.getUsersWithin10km = (req, res) => {
     var users = [];
+    var current;
     MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, function (err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
@@ -104,8 +105,11 @@ exports.getUsersWithin10km = (req, res) => {
                     if (req.session.username != result[index].username) {
                         users.push(result[index]); 
                     }
+                    else {
+                        current = result[index];
+                    }
                 }
-                res.render('find', {users: users});
+                res.render('find', {users: users, me: current});
             }
             db.close();
         });

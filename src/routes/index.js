@@ -13,6 +13,7 @@ exports.appRoute = router => {
   router.get("/getNotifications", homeController.getNotifications);
   router.get("/readNotifications", homeController.readNotifications);
   router.get("/completeprofile", homeController.completeprofile);
+  router.get("/user", homeController.getUser);
 
   router.get("/chat", msgController.getChat);
   router.get("/getMessages", msgController.getMessages);

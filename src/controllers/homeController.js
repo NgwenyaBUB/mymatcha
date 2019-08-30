@@ -21,7 +21,7 @@ exports.getHomePage = (req, res, next) => {
   };
 
   exports.getProfilePage = (req, res, next) => {
-    res.render("profile");
+    homeModel.getMyProfile(req, res);
   };
 
   exports.getNotifications = (req, res, next) => {
@@ -34,4 +34,8 @@ exports.getHomePage = (req, res, next) => {
 
   exports.completeprofile = (req, res, next) => {
     res.render('completeprofile');
+  }
+
+  exports.getUser = (req, res, next) => {
+    res.render('user');
   }
