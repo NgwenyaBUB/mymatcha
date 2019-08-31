@@ -11,8 +11,8 @@
 	<title>Home</title>
 </head>
 
-<body style="background-image: url('/img/back6.jpg'); background-size: cover; overflow: hidden;">
-	<div style="width: 100%; position: absolute; z-index: -1;  height:100%; background-color:  pink; opacity: 0.8;">
+<body style="background-image: url('/img/back6.jpg'); background-size: cover;">
+	<div style="width: 100%; position: absolute; z-index: -1;  height: 100vh; background-color:  pink; opacity: 0.8;">
 		<nav role="navigation">
 			<div class="nav-wrapper container"><a id="logo-container" href="/home" class="brand-logo"> MATCHA</a>
 				<a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
@@ -43,14 +43,14 @@
 			</div>
 		</nav>
 		<h1 style="text-align:center">WELCOME TO MATCHA</h1>
-		<div style="position:relative; left:30%; width:30%; object-fit: contain">
-			<div class="carousel carousel-slider center" data-indicators="true">
+		<div style="position:relative; max-height: 60vh; object-fit: contain">
+			<div class="carousel carousel-slider center" data-indicators="true" style="max-height: 60vh;">
 				<div class="carousel-fixed-item center">
 					<a class="btn waves-effect white grey-text">button</a>
 				</div>
 				<% for(var i=0; i < pics.length; i++) { %>
 				<div class="carousel-item lighten-1 white-text" href="#one!">
-					<img style="max-height: 80%;" src="<%= pics[i].data%>">
+					<img style="max-height: 60vh; object-fit: scale-down" src="<%= pics[i].data%>">
 				</div>
 				<% } %>
 			</div>

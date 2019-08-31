@@ -83,85 +83,82 @@
 		</ul>
 		<a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a> -->
 		<div class="row">
-			<div class="col s4 black" style="min-height: 100vh;">
-				<form>
-					<h1 style="text-align: center; color: white;">help</h1>
+			<div class="col s4 white" style="height: 100vh; overflow-y: scroll">
+					<h1 style="text-align: center; color: black;"><%=user.username %></h1>
 					<div class="row">
-						<div class="input-field col s12 white-text">
-							<input placeholder="" id="first_name" type="text" class="validate">
-							<label for="first_name">First Name</label>
+						<div class="input-field col s12 black-text">
+							<input disabled id="first_name" type="text" class="validate" value="<%=user.name %>">
+							<label for="first_name">first_name</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s12 white-text">
-							<input placeholder="" id="last_name" type="text" class="validate">
+							<input disabled id="last_name" type="text" class="validate" value="<%=user.surname %>">
 							<label for="last_name">Last Name</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s12 white-text">
-							<input placeholder="" id="email" type="email" class="validate">
+							<input disabled id="email" type="email" class="validate" value="<%=user.email %>">
 							<label for="email">Email</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s12 white-text">
-							<input placeholder="" id="username" type="text" class="validate">
+							<input disabled id="username" type="text" class="validate" value="<%=user.username %>">
 							<label for="username">Username</label>
 						</div>
 					</div>
-					<!-- <div class="row">
-						<div class="input-field col s12">
-							<select name="gender">
-								<option value="male" selected>Male</option>
-								<option value="female">Female</option>
-							</select>
-							<label>Gender</label>
-						</div>
-					</div>
-					<div class="row">
-						<div class="input-field col s12">
-							<select name="sexual">
-								<option value="men">Men</option>
-								<option value="women">Women</option>
-								<option value="both" selected>Both</option>
-							</select>
-							<label>Sexual Preference</label>
-						</div>
-					</div>
-					<div class="row">
-						<div class="input-field col s12 white-text">
-							<input placeholder="" id="location" type="text" class="validate">
-							<label for="last_name">Location</label>
-						</div>
-					</div> -->
 					<div class="row white-text">
 						<div class="chips chips-initial"></div>
 					</div>
-				</form>
+					<p>Gender: <%=user.additional.gender %></p>
+					<p>Interested in: <%=user.additional.sexualpreference %></p>
+					<p>Bio: <%=user.additional.bio %></p>
+					<a class="waves-effect waves-light btn"><i class="material-icons right">cloud</i>Connect</a>
 			</div>
-			<div class="col s8">
+			<div class="col s8" style="max-height: 100vh; overflow-y: scroll">
 				<div class="row ">
 					<h1 class="center-align">Profile</h1>
 				</div>
 
-				<!-- add cards with pictures -->
-				<div class="row">
-					<div class="col s12 m6">
-						<div class="card">
-							<div class="card-image">
-								<img src="/img/back9.jpeg">
-								<span class="card-title">Card Title</span>
-								<a class="btn-floating halfway-fab waves-effect waves-light red"><i
-										class="material-icons">add</i></a>
+				<% for(var i=0; i < media.length; i = i+2) { %>
+					<div class="row">
+							<div class="col s6 m6">
+								<div class="card blue lighten-4" >
+									<div class="card-image">
+										<img src="<%=media[i].data%>" style="max-height: 50vh; object-fit: scale-down">
+										<span class="card-title">Card Title</span>
+										<a class="btn-floating halfway-fab waves-effect waves-light red"><i
+												class="material-icons">favorite</i></a>
+									</div>
+									<div class="card-content">
+										<p>I am a very simple card. I am good at containing small bits of information. I am
+											convenient because I require little markup to use effectively.</p>
+									</div>
+								</div>
 							</div>
-							<div class="card-content">
-								<p>I am a very simple card. I am good at containing small bits of information. I am
-									convenient because I require little markup to use effectively.</p>
+					<% if( i+1 < media.length) {%>
+							<div class="col s6 m6">
+								<div class="card blue lighten-4">
+									<div class="card-image">
+										<img src="<%=media[i+1].data%>" style="max-height: 50vh; object-fit: scale-down">
+										<span class="card-title">Card Title</span>
+										<a class="btn-floating halfway-fab waves-effect waves-light red"><i
+												class="material-icons">favorite_border</i></a>
+									</div>
+									<div class="card-content">
+										<p>I am a very simple card. I am good at containing small bits of information. I am
+											convenient because I require little markup to use effectively.</p>
+									</div>
+								</div>
 							</div>
+						<% } %>
+
 						</div>
-					</div>
-				</div>
+				<% } %>
+				<!-- add cards with pictures -->
+				<br/>
 			</div>
 		</div>
 	</div>
@@ -177,15 +174,15 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
 	<script>
+		var tags = [];
+		"<% for(var i=0; i < user.additional.tags.length; i++) { %>"
+				tags.push({
+					tag: "<%=user.additional.tags[i]%>"
+				});
+				"<% } %>"
 		$('.chips').material_chip();
 		$('.chips-initial').material_chip({
-			data: [{
-				tag: 'These',
-			}, {
-				tag: 'da',
-			}, {
-				tag: 'tags',
-			}],
+			data: tags,
 		});
 		$(".dropdown-button").dropdown();
 		$(".button-collapse").sideNav();

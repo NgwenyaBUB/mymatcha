@@ -37,5 +37,5 @@ exports.getHomePage = (req, res, next) => {
   }
 
   exports.getUser = (req, res, next) => {
-    res.render('user');
+    userModel.user(req, res);
   }
