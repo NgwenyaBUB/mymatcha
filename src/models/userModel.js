@@ -115,3 +115,31 @@ exports.getUsersWithin10km = (req, res) => {
         });
     });
 }
+
+exports.user = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.query.username};
+        dbo.collection("users").find(query).toArray(function (err, result) {
+            if (err) throw err;
+            console.log(result);
+            if (result.length == 0) {
+                res.render('user', {user: null});
+            }
+            else {
+                if (req.query.username === req.session.username) {
+                    res.render('profile', {me: result[0]});
+                }
+                else {
+                    var usr = result[0];
+                    dbo.collection("media").find(query).toArray((err, result1) => {
+                        res.render('user', {user: usr, media: result1});
+                    });
+                }
+            }
+            db.close();            
+        });
+    });
+}
