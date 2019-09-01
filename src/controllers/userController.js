@@ -17,3 +17,11 @@ exports.getRegisterController = (req, res, next) => {
 exports.getUsersWithin10kms = (req, res, next) => {
   userModel.getUsersWithin10km(req, res);
 }
+
+exports.likePic = (req, res, next) => {
+  userModel.likepic(req, res);
+}
+
+exports.unlikePic = (req, res, next) => {
+  userModel.unlikepic(req, res);
+}

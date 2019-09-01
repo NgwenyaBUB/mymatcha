@@ -135,11 +135,86 @@ exports.user = (req, res) => {
                 else {
                     var usr = result[0];
                     dbo.collection("media").find(query).toArray((err, result1) => {
-                        res.render('user', {user: usr, media: result1});
+                        var favourite = [];
+                        for (const iterator of result1) {
+                            if (iterator.likes.indexOf(req.session.username) > -1)
+                            {
+                                favourite.push("favorite");
+                            }
+                            else{
+                                favourite.push("favorite_border");
+                            }
+                        }
+                        res.render('user', {user: usr, media: result1, likes: favourite});
                     });
                 }
             }
             db.close();            
+        });
+    });
+}
+
+exports.likepic = (req, resp) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function(err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+                if (err) throw err;
+                var dbo = db.db("matcha");
+                var query = { username: req.query.username,  id: req.query.id};
+                var newvalues = {$addToSet: {likes: req.session.username} };
+                dbo.collection("media").updateOne(query, newvalues, function(err, res) {
+                    if (err) throw err;
+                    console.log(res.result.nModified +" document(s) updated");
+                    console.log(req.query.username, req.query.id, req.session.username, "yah")
+                    db.close();
+                    resp.sendStatus(200);
+                });
+              });
+}
+
+exports.unlikepic = (req, resp) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function(err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+                if (err) throw err;
+                var dbo = db.db("matcha");
+                var query = { username: req.query.username,  id: req.query.id};
+                var newvalues = {$pull: {likes: req.session.username} };
+                dbo.collection("media").updateOne(query, newvalues, function(err, res) {
+                    if (err) throw err;
+                    console.log(res.result.nModified +" document(s) updated");
+                    db.close();
+                    resp.sendStatus(200);
+                });
+    });
+}
+
+exports.getListUsers = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        dbo.collection("users").find().toArray(function (err, result) {
+            if (err) throw err;
+            if (result.length == 0) {
+                console.log("NO USERS FOUND!!!");
+                res.send([]);
+            }
+            else {
+                var users = [];
+                for (let index = 0; index < result.length; index++) {
+                    if (req.session.username != result[index].username) {
+                        users.push(result[index]); 
+                    }
+                }
+                dbo.collection("media").find().toArray((err, result1) => {
+                    var mymedia = {};
+                    for (const iterator of result1) {
+                        mymedia[iterator.username] = iterator;
+                    }
+                    console.log("wat ", mymedia);
+                    res.render('findlist', {users: users, media: mymedia});
+                });
+            }
+            db.close();
         });
     });
 }

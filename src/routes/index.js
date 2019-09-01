@@ -14,12 +14,15 @@ exports.appRoute = router => {
   router.get("/readNotifications", homeController.readNotifications);
   router.get("/completeprofile", homeController.completeprofile);
   router.get("/user", homeController.getUser);
+  router.get("/findlist", homeController.getFindListPage);
 
   router.get("/chat", msgController.getChat);
   router.get("/getMessages", msgController.getMessages);
   router.get("/getMessageCount", msgController.getMessageCount);
 
   router.get("/getUsersWithin10kms", userController.getUsersWithin10kms);
+  router.get("/likePicture", userController.likePic);
+  router.get("/unlikePicture", userController.unlikePic);
 
   router.post('/logina', userController.getUserController);
   router.post('/registera', userController.getRegisterController);

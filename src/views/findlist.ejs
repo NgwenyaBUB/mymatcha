@@ -97,96 +97,34 @@
 		</nav>
 		<h1 style="text-align:center">Find</h1>
 		<div class="row">
-			<div class="col s3 offset-s4">
-				<a href="/findlist" class="waves-effect waves-light btn"><i class="material-icons right">view_list</i>List View</a>
+			<div class="col s3">
+					<a href="/find" class="waves-effect waves-light btn"><i class="material-icons right">map</i>Map View</a>
+			</div>
+			<div class="input-field col s6">
+					<i class="material-icons prefix">search</i>
+					<textarea id="icon_prefix2" class="materialize-textarea"></textarea>
+					<label for="icon_prefix2">Search</label>
 			</div>
 		</div>
-		<div id='map' style="position:relative; width:80%; height: 80%; left: 10%;"></div>
+		<div class="row">
+			<div class="col s6 offset-s3">
+				<ul class="collection">
+				<% for(var i=0; i < users.length; i++) { %>
+					<li class="collection-item avatar">
+						<img src="<%=media[users[i].username].data%>" alt="<%=users[i].username %>" class="circle">
+						<span class="title"><%=users[i].username %></span>
+						<p><%=users[i].name %> <%=users[i].surname %><br>
+							gender: <%=users[i].additional.gender %>
+						</p>
+						<a href="/user?username=<%=users[i].username %>" class="secondary-content"><i class="material-icons">grade</i></a>
+					</li>
+					<br/>
+					<% } %>
+				</ul>
+			</div>
+		</div>
 		<script>
-			mapboxgl.accessToken = 'pk.eyJ1IjoiYm5nd2VueSIsImEiOiJjanBwZm1ubzkwM3RpNDNteHB1cTNjNDRmIn0.e8kvP8D0k5s08tT6OkEp8A';
-			const map = new mapboxgl.Map({
-				container: 'map',
-				style: 'mapbox://styles/bngweny/cjppfog102p6z2rpi2eqx7iie',
-				center: ["<%=me.additional.longitude%>", "<%=me.additional.latitude%>"],
-				zoom: 14.0
-			});
-			var peoples = [];
-			"<% for(var i=0; i < users.length; i++) { %>"
-			peoples.push({
-				type: 'Feature',
-				geometry: {
-					type: 'Point',
-					coordinates: ["<%=users[i].additional.longitude%>", "<%=users[i].additional.latitude%>"]
-				},
-				properties: {
-					title: '<%=users[i].username%>',
-					description: '<%=users[i].additional.bio%>',
-					gender: '<%=users[i].additional.gender%>'
-				}
-			});
-			"<% } %>"
-			peoples.push({
-				type: 'Feature',
-				geometry: {
-					type: 'Point',
-					coordinates: ["<%=me.additional.longitude%>", "<%=me.additional.latitude%>"]
-				},
-				properties: {
-					title: '<%=me.username%>',
-					description: 'Me',
-					gender: 'me'
-				}
-			});
-			var geojson = {
-				type: 'FeatureCollection',
-				features: peoples
-				// 	[
-				// 		{
-				// 		type: 'Feature',
-				// 		geometry: {
-				// 			type: 'Point',
-				// 			coordinates: [18.417, -33.907]
-				// 		},
-				// 		properties: {
-				// 			title: 'Bae?',
-				// 			description: 'On my phone looking for a reason to get off my phone!'
-				// 		}
-				// 	},
-				// 	{
-				// 		type: 'Feature',
-				// 		geometry: {
-				// 			type: 'Point',
-				// 			coordinates: [-122.414, 37.776]
-				// 		},
-				// 		properties: {
-				// 			title: 'Mapbox',
-				// 			description: 'San Francisco, California'
-				// 		}
-				// 	}
 
-				// ]
-			};
-
-			geojson.features.forEach(function (marker) {
-				console.log(marker);
-				// create a HTML element for each feature
-				var el = document.createElement('div');
-				if (marker.properties.gender == "male") {
-					el.className = 'marker2';
-				}
-				else if (marker.properties.gender == "me") {
-					el.className = 'me';
-				} else {
-					el.className = 'marker';
-				}
-
-				// make a marker for each feature and add to the map
-				new mapboxgl.Marker(el)
-					.setLngLat(marker.geometry.coordinates)
-					.setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-						.setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p><a href=/user?username=' + marker.properties.title + '>view</a>'))
-					.addTo(map);
-			});
 		</script>
 	</div>
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"
