@@ -20,6 +20,11 @@ exports.getHomePage = (req, res, next) => {
     userModel.getUsersWithin10km(req, res);
   };
 
+  exports.getFindListPage = (req, res, next) => {
+    // res.render("find");
+    userModel.getListUsers(req, res);
+  };
+
   exports.getProfilePage = (req, res, next) => {
     homeModel.getMyProfile(req, res);
   };
