@@ -15,6 +15,7 @@ exports.appRoute = router => {
   router.get("/completeprofile", homeController.completeprofile);
   router.get("/user", homeController.getUser);
   router.get("/findlist", homeController.getFindListPage);
+  router.get("/logout", homeController.logout);
 
   router.get("/chat", msgController.getChat);
   router.get("/getMessages", msgController.getMessages);
@@ -23,8 +24,10 @@ exports.appRoute = router => {
   router.get("/getUsersWithin10kms", userController.getUsersWithin10kms);
   router.get("/likePicture", userController.likePic);
   router.get("/unlikePicture", userController.unlikePic);
+  router.get("/likeUser", userController.likeUser);
 
   router.post('/logina', userController.getUserController);
   router.post('/registera', userController.getRegisterController);
   router.post("/sendMessage", msgController.sendMessage);
+  router.post("/search", userController.findUsers);
 };

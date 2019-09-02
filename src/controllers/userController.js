@@ -25,3 +25,11 @@ exports.likePic = (req, res, next) => {
 exports.unlikePic = (req, res, next) => {
   userModel.unlikepic(req, res);
 }
+
+exports.findUsers = (req, res, next) => {
+  userModel.findUsers(req, res);
+}
+
+exports.likeUser = (req, res, next) => {
+  userModel.likeUser(req, res);
+}

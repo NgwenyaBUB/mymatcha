@@ -78,10 +78,25 @@ exports.login = (req, res) => {
                 // var hashedPassword = passwordHash.generate(req.body.pass, {algorithm: 'whirlpool', saltLength: 8, iterations: 1});
                 if (passwordHash.verify(req.body.pass, result[0]["password"])) {
                     req.session.username = req.body.username;
-                    //   console.log("yay");
+                    exports.changeStatus(req.session.username, "online");
                     exports.homeMedia(req, res, req.body.username);
                 }
             }
+            db.close();
+        });
+    });
+}
+
+exports.changeStatus = (username , status) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: username};
+        var newvalues = {$set: {"status": status} };
+        dbo.collection("users").updateOne(query, newvalues, function (err, res) {
+            if (err) throw err;
+            console.log(res.result.nModified + " document(s) updated");
             db.close();
         });
     });
@@ -103,13 +118,13 @@ exports.getUsersWithin10km = (req, res) => {
             else {
                 for (let index = 0; index < result.length; index++) {
                     if (req.session.username != result[index].username) {
-                        users.push(result[index]); 
+                        users.push(result[index]);
                     }
                     else {
                         current = result[index];
                     }
                 }
-                res.render('find', {users: users, me: current});
+                res.render('find', { users: users, me: current });
             }
             db.close();
         });
@@ -121,69 +136,73 @@ exports.user = (req, res) => {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
-        var query = { username: req.query.username};
+        var query = { username: req.query.username };
         dbo.collection("users").find(query).toArray(function (err, result) {
             if (err) throw err;
             console.log(result);
             if (result.length == 0) {
-                res.render('user', {user: null});
+                res.render('user', { user: null });
             }
             else {
                 if (req.query.username === req.session.username) {
-                    res.render('profile', {me: result[0]});
+                    res.render('profile', { me: result[0] });
                 }
                 else {
                     var usr = result[0];
                     dbo.collection("media").find(query).toArray((err, result1) => {
                         var favourite = [];
                         for (const iterator of result1) {
-                            if (iterator.likes.indexOf(req.session.username) > -1)
-                            {
+                            if (iterator.likes.indexOf(req.session.username) > -1) {
                                 favourite.push("favorite");
                             }
-                            else{
+                            else {
                                 favourite.push("favorite_border");
                             }
                         }
-                        res.render('user', {user: usr, media: result1, likes: favourite});
+                        var disabled = "disabled";
+                        if (usr.connected.includes(req.session.username))
+                        {
+                            disabled = "";
+                        }
+                        res.render('user', { user: usr, media: result1, likes: favourite , disabled: disabled});
                     });
                 }
             }
-            db.close();            
+            db.close();
         });
     });
 }
 
 exports.likepic = (req, resp) => {
-    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function(err, db) {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
-                if (err) throw err;
-                var dbo = db.db("matcha");
-                var query = { username: req.query.username,  id: req.query.id};
-                var newvalues = {$addToSet: {likes: req.session.username} };
-                dbo.collection("media").updateOne(query, newvalues, function(err, res) {
-                    if (err) throw err;
-                    console.log(res.result.nModified +" document(s) updated");
-                    console.log(req.query.username, req.query.id, req.session.username, "yah")
-                    db.close();
-                    resp.sendStatus(200);
-                });
-              });
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.query.username, id: req.query.id };
+        var newvalues = { $addToSet: { likes: req.session.username } };
+        dbo.collection("media").updateOne(query, newvalues, function (err, res) {
+            if (err) throw err;
+            console.log(res.result.nModified + " document(s) updated");
+            console.log(req.query.username, req.query.id, req.session.username, "yah")
+            db.close();
+            resp.sendStatus(200);
+        });
+    });
 }
 
 exports.unlikepic = (req, resp) => {
-    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function(err, db) {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
-                if (err) throw err;
-                var dbo = db.db("matcha");
-                var query = { username: req.query.username,  id: req.query.id};
-                var newvalues = {$pull: {likes: req.session.username} };
-                dbo.collection("media").updateOne(query, newvalues, function(err, res) {
-                    if (err) throw err;
-                    console.log(res.result.nModified +" document(s) updated");
-                    db.close();
-                    resp.sendStatus(200);
-                });
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.query.username, id: req.query.id };
+        var newvalues = { $pull: { likes: req.session.username } };
+        dbo.collection("media").updateOne(query, newvalues, function (err, res) {
+            if (err) throw err;
+            console.log(res.result.nModified + " document(s) updated");
+            db.close();
+            resp.sendStatus(200);
+        });
     });
 }
 
@@ -202,7 +221,7 @@ exports.getListUsers = (req, res) => {
                 var users = [];
                 for (let index = 0; index < result.length; index++) {
                     if (req.session.username != result[index].username) {
-                        users.push(result[index]); 
+                        users.push(result[index]);
                     }
                 }
                 dbo.collection("media").find().toArray((err, result1) => {
@@ -211,8 +230,111 @@ exports.getListUsers = (req, res) => {
                         mymedia[iterator.username] = iterator;
                     }
                     console.log("wat ", mymedia);
-                    res.render('findlist', {users: users, media: mymedia});
+                    res.render('findlist', { users: users, media: mymedia });
                 });
+            }
+            db.close();
+        });
+    });
+}
+
+exports.findUsers = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, (err, db) => {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.body.search };
+        dbo.collection("users").find().toArray(function (err, result) {
+            if (err) throw err;
+            if (result.length == 0) {
+                console.log("USERNAME IS DOESN'T EXIST");
+                res.render('findlist', { users: [], media: {} });
+            }
+            else {
+                var users = [];
+                for (const iterator of result) {
+                    if (iterator.username.substring(0, req.body.search.length) == req.body.search) {
+                        users.push(iterator);
+                    }
+                }
+                dbo.collection("media").find().toArray((err, result1) => {
+                    var mymedia = {};
+                    for (const iterator of result1) {
+                        mymedia[iterator.username] = iterator;
+                    }
+
+                    res.render('findlist', { users: users, media: mymedia });
+                });
+            }
+            db.close();
+        });
+    });
+}
+
+exports.likeUser = (req, resp) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.query.username };
+        var newvalues = { $addToSet: { liked: req.session.username } };
+        dbo.collection("users").updateOne(query, newvalues, function (err, res) {
+            if (err) throw err;
+            console.log(res.result.nModified + " document(s) updated");
+            exports.connect(req.query.username, req.session.username);
+            db.close();
+            resp.sendStatus(200);
+        });
+    });
+}
+
+exports.unlikeUser = (req, resp) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.query.username };
+        var newvalues = { $pull: { liked: req.session.username } };
+        dbo.collection("users").updateOne(query, newvalues, function (err, res) {
+            if (err) throw err;
+            console.log(res.result.nModified + " document(s) updated");
+            db.close();
+            resp.sendStatus(200);
+        });
+    });
+}
+
+exports.connect = (username1, username2) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = {
+            "$or": [{
+                username: username1,
+            }, {
+                username: username2,
+            }]
+        };
+        dbo.collection("users").find(query).toArray(function (err, result) {
+            if (err) throw err;
+            if (result.length < 2) {
+                console.log("lol wat");
+            }
+            else {
+                if ((result[0].liked.includes(username1) && result[1].liked.includes(username2)) || (result[1].liked.includes(username1) && result[0].liked.includes(username2)))
+                {
+                    var query1 = { username: username2 };
+                    var query2 = { username: username1 };
+                    var newvalues1 = { $addToSet: { connected: username1 } };
+                    var newvalues2 = { $addToSet: { connected: username2 } };
+                    dbo.collection("users").updateMany(query1, newvalues1, function (err, res) {
+                        console.log(res.result.nModified + " document(s) updated", " connected");
+                    });
+                    dbo.collection("users").updateMany(query2, newvalues2, function (err, res) {
+                        console.log(res.result.nModified + " document(s) updated", " connected");
+                    });
+                }
             }
             db.close();
         });
