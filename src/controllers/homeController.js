@@ -44,3 +44,9 @@ exports.getHomePage = (req, res, next) => {
   exports.getUser = (req, res, next) => {
     userModel.user(req, res);
   }
+
+  exports.logout = (req, res, next) => {
+    userModel.changeStatus(req.session.username, "offline");
+    req.session.username = "";
+    res.render('index');
+  }

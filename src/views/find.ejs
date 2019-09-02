@@ -73,7 +73,7 @@
 					<li><a href="/profile">Profile</a></li>
 					<li><a href="#!">Reset Password</a></li>
 					<li class="divider"></li>
-					<li><a href="#!">Logout</a></li>
+					<li><a href="/logout">Logout</a></li>
 				</ul>
 				<ul class="right hide-on-med-and-down">
 					<li><a href="/find">Find</a></li>
@@ -168,7 +168,7 @@
 			};
 
 			geojson.features.forEach(function (marker) {
-				console.log(marker);
+				// console.log(marker);
 				// create a HTML element for each feature
 				var el = document.createElement('div');
 				if (marker.properties.gender == "male") {

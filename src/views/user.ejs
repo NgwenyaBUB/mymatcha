@@ -43,7 +43,7 @@
 					<li><a href="/profile">Profile</a></li>
 					<li><a href="#!">Reset Password</a></li>
 					<li class="divider"></li>
-					<li><a href="#!">Logout</a></li>
+					<li><a href="/logout">Logout</a></li>
 				</ul>
 				<ul class="right hide-on-med-and-down">
 					<li><a href="/find">Find</a></li>
@@ -84,38 +84,45 @@
 		<a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a> -->
 		<div class="row">
 			<div class="col s4 white" style="height: 100vh; overflow-y: scroll">
-				<h1 style="text-align: center; color: black;"><%=user.username %></h1>
-				<div class="row">
-					<div class="input-field col s12 black-text">
-						<input disabled id="first_name" type="text" class="validate" value="<%=user.name %>">
-						<label for="first_name">first_name</label>
+				<div id="userstuff">
+					<h1 style="text-align: center; color: black;"><%=user.username %></h1>
+					<div class="row">
+						<div class="input-field col s12 black-text">
+							<input disabled id="first_name" type="text" class="validate" value="<%=user.name %>">
+							<label for="first_name">first_name</label>
+						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="input-field col s12 white-text">
-						<input disabled id="last_name" type="text" class="validate" value="<%=user.surname %>">
-						<label for="last_name">Last Name</label>
+					<div class="row">
+						<div class="input-field col s12 white-text">
+							<input disabled id="last_name" type="text" class="validate" value="<%=user.surname %>">
+							<label for="last_name">Last Name</label>
+						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="input-field col s12 white-text">
-						<input disabled id="email" type="email" class="validate" value="<%=user.email %>">
-						<label for="email">Email</label>
+					<div class="row">
+						<div class="input-field col s12 white-text">
+							<input disabled id="email" type="email" class="validate" value="<%=user.email %>">
+							<label for="email">Email</label>
+						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="input-field col s12 white-text">
-						<input disabled id="username" type="text" class="validate" value="<%=user.username %>">
-						<label for="username">Username</label>
+					<div class="row">
+						<div class="input-field col s12 white-text">
+							<input disabled id="username" type="text" class="validate" value="<%=user.username %>">
+							<label for="username">Username</label>
+						</div>
 					</div>
+					<div class="row white-text">
+						<div class="chips chips-initial"></div>
+					</div>
+					<p>Gender: <%=user.additional.gender %></p>
+					<p>Interested in: <%=user.additional.sexualpreference %></p>
+					<p>Bio: <%=user.additional.bio %></p>
+					<p>Status: <%=user.status %></p>
+					<p>Fame rating: </p>
 				</div>
-				<div class="row white-text">
-					<div class="chips chips-initial"></div>
-				</div>
-				<p>Gender: <%=user.additional.gender %></p>
-				<p>Interested in: <%=user.additional.sexualpreference %></p>
-				<p>Bio: <%=user.additional.bio %></p>
-				<a class="waves-effect waves-light btn"><i class="material-icons right">cloud</i>Connect</a>
+				<a class="waves-effect waves-light btn" id="thumbs_up"><i
+						class="material-icons right">thumb_up</i>Like</a>
+				<a class="waves-effect waves-light btn <%=disabled %>" href="/chat"><i
+						class="material-icons right">message</i>Message</a>
 			</div>
 			<div class="col s8" style="max-height: 100vh; overflow-y: scroll">
 				<div class="row ">
@@ -128,7 +135,6 @@
 						<div class="card blue lighten-4">
 							<div class="card-image">
 								<img src="<%=media[i].data%>" style="max-height: 50vh; object-fit: scale-down">
-								<span class="card-title">Card Title</span>
 								<a class="btn-floating halfway-fab waves-effect waves-light red"
 									id="like<%=media[i].id%>"><i class="material-icons"
 										id="i<%=media[i].id%>"><%=likes[i]%></i></a>
@@ -146,7 +152,6 @@
 						<div class="card blue lighten-4">
 							<div class="card-image">
 								<img src="<%=media[i+1].data%>" style="max-height: 50vh; object-fit: scale-down">
-								<span class="card-title">Card Title</span>
 								<a class="btn-floating halfway-fab waves-effect waves-light red"
 									id="like<%=media[i + 1].id%>"><i class="material-icons"
 										id="i<%=media[i + 1].id%>"><%=likes[i + 1]%></i></a>
@@ -242,6 +247,22 @@
 		});
 		"<% } %>"
 
+		$("#thumbs_up").on("click", () => {
+			$.ajax({
+				type: 'GET',
+				url: '/likeUser?username=' + username,
+				success: function (data) {
+					console.log('Like User');
+				}
+			});
+		});
+
+		$(window).on('load', function () {
+			if ("<%=user.status %>" == "offline")
+			{
+				$("#userstuff").append('<p>Last Seen: '+new Date("<%=user.lastseen %>" * 1000)+'</p>');
+			}
+		});
 		$('.chips').material_chip();
 		$('.chips-initial').material_chip({
 			data: tags,
