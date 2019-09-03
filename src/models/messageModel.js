@@ -74,11 +74,20 @@ exports.getChat = (req, res) => {
         if (err) throw err;
         var dbo = db.db("matcha");
         var query = { username: req.session.username };
-        dbo.collection("users").find(query).toArray((err, result1) => {
+        dbo.collection("users").find().toArray((err, result1) => {
             var myusers;
             var mymedia = {};
+            var allusers = {};
             if (err) throw err;
-            myusers = result1;
+            for (const iterator of result1) {
+                if (iterator.username == req.session.username)
+                {
+                    myusers = iterator;
+                }
+                else{
+                    allusers[iterator.username] = iterator;
+                }
+            }
             dbo.collection("media").find().toArray((err, result) => {
                 if (err) throw err;
                 for (const iterator of result) {
@@ -87,7 +96,7 @@ exports.getChat = (req, res) => {
                 // console.log('userd', myusers[0].connected);
                 // console.log('media', mymedia);
                 db.close();
-                res.render('chat',  { users: myusers[0].connected, media: mymedia });
+                res.render('chat',  { users: myusers.connected, media: mymedia , allusers: allusers});
             });
         });
     });

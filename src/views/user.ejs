@@ -123,6 +123,9 @@
 						class="material-icons right">thumb_up</i>Like</a>
 				<a class="waves-effect waves-light btn <%=disabled %>" href="/chat"><i
 						class="material-icons right">message</i>Message</a>
+				<a class="waves-effect waves-light btn <%=disabled %>"><i
+						class="material-icons right">block</i>Block</a>
+				<a class="waves-effect waves-light btn">Report</a>
 			</div>
 			<div class="col s8" style="max-height: 100vh; overflow-y: scroll">
 				<div class="row ">
@@ -165,7 +168,6 @@
 						</div>
 					</div>
 					<% } %>
-
 				</div>
 				<% } %>
 				<!-- add cards with pictures -->
@@ -202,7 +204,7 @@
 				type: 'GET',
 				url: '/likePicture?username=' + username + "&id=" + id,
 				success: function (data) {
-					console.log('like');
+					// console.log('like');
 
 				}
 			});
@@ -218,7 +220,7 @@
 				type: 'GET',
 				url: '/unlikePicture?username=' + username + "&id=" + id,
 				success: function (data) {
-					console.log('unlike');
+					// console.log('unlike');
 
 				}
 			});
@@ -252,7 +254,7 @@
 				type: 'GET',
 				url: '/likeUser?username=' + username,
 				success: function (data) {
-					console.log('Like User');
+					// console.log('Like User');
 				}
 			});
 		});

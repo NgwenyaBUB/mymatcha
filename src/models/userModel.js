@@ -87,13 +87,20 @@ exports.login = (req, res) => {
     });
 }
 
-exports.changeStatus = (username , status) => {
+exports.changeStatus = (username, status) => {
     MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
-        var query = { username: username};
-        var newvalues = {$set: {"status": status} };
+        var query = { username: username };
+        var newvalues = { $set: { "status": status } };
+        if (status == "offline") {
+            var newvalues1 = { $set: { lastseen: Math.floor(Date.now() / 1000) } };
+            dbo.collection("users").updateOne(query, newvalues1, function (err, res) {
+                if (err) throw err;
+                console.log(res.result.nModified + " document(s) updated");
+            });
+        }
         dbo.collection("users").updateOne(query, newvalues, function (err, res) {
             if (err) throw err;
             console.log(res.result.nModified + " document(s) updated");
@@ -139,7 +146,7 @@ exports.user = (req, res) => {
         var query = { username: req.query.username };
         dbo.collection("users").find(query).toArray(function (err, result) {
             if (err) throw err;
-            console.log(result);
+            // console.log(result);
             if (result.length == 0) {
                 res.render('user', { user: null });
             }
@@ -160,11 +167,10 @@ exports.user = (req, res) => {
                             }
                         }
                         var disabled = "disabled";
-                        if (usr.connected.includes(req.session.username))
-                        {
+                        if (usr.connected.includes(req.session.username)) {
                             disabled = "";
                         }
-                        res.render('user', { user: usr, media: result1, likes: favourite , disabled: disabled});
+                        res.render('user', { user: usr, media: result1, likes: favourite, disabled: disabled });
                     });
                 }
             }
@@ -183,7 +189,7 @@ exports.likepic = (req, resp) => {
         dbo.collection("media").updateOne(query, newvalues, function (err, res) {
             if (err) throw err;
             console.log(res.result.nModified + " document(s) updated");
-            console.log(req.query.username, req.query.id, req.session.username, "yah")
+            // console.log(req.query.username, req.query.id, req.session.username, "yah")
             db.close();
             resp.sendStatus(200);
         });
@@ -229,7 +235,7 @@ exports.getListUsers = (req, res) => {
                     for (const iterator of result1) {
                         mymedia[iterator.username] = iterator;
                     }
-                    console.log("wat ", mymedia);
+                    // console.log("wat ", mymedia);
                     res.render('findlist', { users: users, media: mymedia });
                 });
             }
@@ -244,29 +250,64 @@ exports.findUsers = (req, res) => {
         if (err) throw err;
         var dbo = db.db("matcha");
         var query = { username: req.body.search };
+        if (req.body.group1 == "tags") {
+            exports.findByTag(req, res);
+        }
+        else {
+            dbo.collection("users").find().toArray(function (err, result) {
+                if (err) throw err;
+                if (result.length == 0) {
+                    console.log("USERNAME IS DOESN'T EXIST");
+                    res.render('findlist', { users: [], media: {} });
+                }
+                else {
+                    console.log(req.body);
+                    var users = [];
+                    for (const iterator of result) {
+                        if (iterator.username.includes(req.body.search)) {
+                            users.push(iterator);
+                        }
+                    }
+                    dbo.collection("media").find().toArray((err, result1) => {
+                        var mymedia = {};
+                        for (const iterator of result1) {
+                            mymedia[iterator.username] = iterator;
+                        }
+
+                        res.render('findlist', { users: users, media: mymedia });
+                    });
+                }
+                db.close();
+            });
+        }
+    });
+}
+
+exports.findByTag = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, (err, db) => {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
         dbo.collection("users").find().toArray(function (err, result) {
-            if (err) throw err;
-            if (result.length == 0) {
-                console.log("USERNAME IS DOESN'T EXIST");
-                res.render('findlist', { users: [], media: {} });
-            }
-            else {
-                var users = [];
-                for (const iterator of result) {
-                    if (iterator.username.substring(0, req.body.search.length) == req.body.search) {
-                        users.push(iterator);
+            var users = [];
+            for (const iterator of result) {
+                if (iterator.username != req.session.username) {
+                    for (const tag of iterator.additional.tags) {
+                        if (tag.includes(req.body.search)) {
+                            users.push(iterator);
+                            break;
+                        }
                     }
                 }
-                dbo.collection("media").find().toArray((err, result1) => {
-                    var mymedia = {};
-                    for (const iterator of result1) {
-                        mymedia[iterator.username] = iterator;
-                    }
-
-                    res.render('findlist', { users: users, media: mymedia });
-                });
             }
-            db.close();
+            dbo.collection("media").find().toArray((err, result1) => {
+                var mymedia = {};
+                for (const iterator of result1) {
+                    mymedia[iterator.username] = iterator;
+                }
+
+                res.render('findlist', { users: users, media: mymedia });
+            });
         });
     });
 }
@@ -319,11 +360,10 @@ exports.connect = (username1, username2) => {
         dbo.collection("users").find(query).toArray(function (err, result) {
             if (err) throw err;
             if (result.length < 2) {
-                console.log("lol wat");
+                // console.log("lol wat");
             }
             else {
-                if ((result[0].liked.includes(username1) && result[1].liked.includes(username2)) || (result[1].liked.includes(username1) && result[0].liked.includes(username2)))
-                {
+                if ((result[0].liked.includes(username1) && result[1].liked.includes(username2)) || (result[1].liked.includes(username1) && result[0].liked.includes(username2))) {
                     var query1 = { username: username2 };
                     var query2 = { username: username1 };
                     var newvalues1 = { $addToSet: { connected: username1 } };
