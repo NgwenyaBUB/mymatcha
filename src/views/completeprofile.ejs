@@ -45,10 +45,8 @@
                 </div>
 
                 <br/>
-                <div class="input-field col s12">
-                    <input type="text" class="datepicker">
-                    <label>birthdate</label>
-                </div>
+                    <input type="text" class="datepicker" name="birthdate">
+                    <!-- <label>birthdate</label> -->
                 <br/>
             <!-- <p style="color: black;">Say something about yourself:</p> -->
             <!-- <textarea name="bio" class="form-control" placeholder="Who are you?" required></textarea> -->
@@ -101,21 +99,7 @@
         </div>
     </div>
     <p id="test"></p>
-    <script>
-        
-    /*    document.getElementById("location").addEventListener('click', getLocation());
-        var x = document.getElementById("cords");
-        function getLocation() {
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
-          } 
-        }
-        
-        function showPosition(position) {
-          x.innerHTML = "Latitude: " + position.coords.latitude + 
-          "<br>Longitude: " + position.coords.longitude;
-        }*/
-        </script>
+    
     <script src="/js/tags.js"></script>
     <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>   -->
     <script
@@ -130,6 +114,32 @@
             $('select').material_select();
         })
     </script>
+    <script>
+          $('.datepicker').pickadate({
+    selectMonths: true, // Creates a dropdown to control month
+    selectYears: 55, // Creates a dropdown of 15 years to control year,
+    clear: 'Clear',
+    close: 'Ok',
+    closeOnSelect: true, // Close upon selecting a date,
+    container: undefined, // ex. 'body' will append picker to body
+  });
+  $('.datepicker').on('mousedown',function(event){
+    event.preventDefault();
+})
+        
+    /*    document.getElementById("location").addEventListener('click', getLocation());
+        var x = document.getElementById("cords");
+        function getLocation() {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+          } 
+        }
+        
+        function showPosition(position) {
+          x.innerHTML = "Latitude: " + position.coords.latitude + 
+          "<br>Longitude: " + position.coords.longitude;
+        }*/
+        </script>
 
    
 </body>
