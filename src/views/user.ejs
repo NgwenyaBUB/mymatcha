@@ -119,10 +119,11 @@
 					<p>Status: <%=user.status %></p>
 					<p>Fame rating: </p>
 				</div>
-				<a class="waves-effect waves-light btn" id="thumbs_up"><i
-						class="material-icons right">thumb_up</i>Like</a>
+				<a class="waves-effect waves-light btn" id="thumbs_up" onclick="likeuser()"><%=liked %></a>
 				<a class="waves-effect waves-light btn <%=disabled %>" href="/chat"><i
 						class="material-icons right">message</i>Message</a>
+				<a class="waves-effect waves-light btn"><i class="material-icons right">block</i>Block</a>
+				<a class="waves-effect waves-light btn">Report</a>
 			</div>
 			<div class="col s8" style="max-height: 100vh; overflow-y: scroll">
 				<div class="row ">
@@ -132,7 +133,7 @@
 				<% for(var i=0; i < media.length; i = i+2) { %>
 				<div class="row">
 					<div class="col s6 m6">
-						<div class="card blue lighten-4">
+						<div class="card white lighten-4">
 							<div class="card-image">
 								<img src="<%=media[i].data%>" style="max-height: 50vh; object-fit: scale-down">
 								<a class="btn-floating halfway-fab waves-effect waves-light red"
@@ -149,7 +150,7 @@
 					</div>
 					<% if( i+1 < media.length) {%>
 					<div class="col s6 m6">
-						<div class="card blue lighten-4">
+						<div class="card white lighten-4">
 							<div class="card-image">
 								<img src="<%=media[i+1].data%>" style="max-height: 50vh; object-fit: scale-down">
 								<a class="btn-floating halfway-fab waves-effect waves-light red"
@@ -165,7 +166,6 @@
 						</div>
 					</div>
 					<% } %>
-
 				</div>
 				<% } %>
 				<!-- add cards with pictures -->
@@ -185,6 +185,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
 	<script>
+		var user = '<%=liked%>';
 		var mylikes = [];
 		"<% for(var i=0; i < likes.length; i++) { %>"
 		mylikes.push("<%=likes[i]%>");
@@ -202,7 +203,7 @@
 				type: 'GET',
 				url: '/likePicture?username=' + username + "&id=" + id,
 				success: function (data) {
-					console.log('like');
+					// console.log('like');
 
 				}
 			});
@@ -218,7 +219,7 @@
 				type: 'GET',
 				url: '/unlikePicture?username=' + username + "&id=" + id,
 				success: function (data) {
-					console.log('unlike');
+					// console.log('unlike');
 
 				}
 			});
@@ -247,20 +248,44 @@
 		});
 		"<% } %>"
 
-		$("#thumbs_up").on("click", () => {
+		function dolikeuser() {
 			$.ajax({
 				type: 'GET',
-				url: '/likeUser?username=' + username,
+				url: '/likeUser?username=<%=user.username %>',
 				success: function (data) {
-					console.log('Like User');
+					// console.log('Like User');
 				}
 			});
-		});
+		}
+
+		function dounlikeuser() {
+			$.ajax({
+				type: 'GET',
+				url: '/unlikeUser?username=<%=user.username %>',
+				success: function (data) {
+					// console.log('Like User');
+				}
+			});
+		}
+
+		function likeuser() {
+			if (user == "Like") {
+				user = "Unlike";
+				$("#thumbs_up").empty();
+				$("#thumbs_up").html('Unlike');
+				dolikeuser();
+			}
+			else {
+				user = "Like";
+				$("#thumbs_up").empty();
+				$("#thumbs_up").html('Like');
+				dounlikeuser();
+			}
+		}
 
 		$(window).on('load', function () {
-			if ("<%=user.status %>" == "offline")
-			{
-				$("#userstuff").append('<p>Last Seen: '+new Date("<%=user.lastseen %>" * 1000)+'</p>');
+			if ("<%=user.status %>" == "offline") {
+				$("#userstuff").append('<p>Last Seen: ' + new Date("<%=user.lastseen %>" * 1000) + '</p>');
 			}
 		});
 		$('.chips').material_chip();

@@ -33,3 +33,11 @@ exports.findUsers = (req, res, next) => {
 exports.likeUser = (req, res, next) => {
   userModel.likeUser(req, res);
 }
+
+exports.unlikeUser = (req, res, next) => {
+  userModel.unlikeUser(req, res);
+}
+
+exports.complete = (req, res, next) => {
+  userModel.complete(req, res);
+}

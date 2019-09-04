@@ -46,7 +46,7 @@
 		<div style="position:relative; max-height: 60vh; object-fit: contain">
 			<div class="carousel carousel-slider center" data-indicators="true" style="max-height: 60vh;">
 				<div class="carousel-fixed-item center">
-					<a class="btn waves-effect white grey-text">button</a>
+					<a class="btn waves-effect white grey-text">Add Picture</a>
 				</div>
 				<% for(var i=0; i < pics.length; i++) { %>
 				<div class="carousel-item lighten-1 white-text" href="#one!">
@@ -84,6 +84,7 @@
 		// $('.carousel.carousel-slider').carousel({
 		//   fullWidth: true
 		// });
+		var msgcount = '0';
 		$(".dropdown-button").dropdown();
 		$(".button-collapse").sideNav();
 		$('.carousel.carousel-slider').carousel({ fullWidth: true });
@@ -101,6 +102,11 @@
 				url: '/getMessageCount',
 				success: function (data) {
 					// console.log("msgcount", data);
+					if (data != msgcount) {
+						Materialize.toast('You have New Messages', 4000) ;
+						//only when there is a new message.. maybe keep track of the messages count and if theres a difference display
+					}
+					msgcount = data;
 					$('#msg1').text(data + "");
 				}
 			});
