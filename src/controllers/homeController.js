@@ -6,7 +6,7 @@ exports.getLoginPage = (req, res, next) => {
   res.render("login");
 };
 
-exports.getHomePage = (req, res, next) => {
+exports.getHomePage = (req, res, next) => { 
     if (!req.session.username)
     {
       res.render('index', {error : 'You are not logged in'});

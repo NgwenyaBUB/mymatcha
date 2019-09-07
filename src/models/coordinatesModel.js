@@ -25,7 +25,7 @@ exports.getDistance = (pointA, pointB) => {
     return distanceInKmBetweenEarthCoordinates(pointA.lat, pointA.lon, pointB.lat, pointB.lon);
 }
 
-exports.getLocation = (req, request) => {
+exports.getLocation = (req, res) => {
   // var location = {city : "", latitude: "", longitude: ""};
     // var url = 'http://api.ipstack.com/check?access_key=03cc3fd4e61ce21f0324f328b0a7e67c';
     var url = 'http://ip-api.com/json';
