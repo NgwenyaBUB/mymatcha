@@ -180,6 +180,13 @@
 						<label for="autocomplete-input">Location</label>
 					</div>
 				</div>
+				<div class="row">
+					<p> Viewed by :
+						<% for (const iterator of me.viewed) {%>
+							<%= iterator%> &nbsp;|
+						<% } %>
+					</p>
+				</div>
 			</div>
 		</div>
 	</div>

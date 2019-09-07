@@ -13,5 +13,11 @@ exports.getMessages = (req, res, next) => {
   };
 
   exports.getChat = (req, res, next) => {
-    msgModel.getChat(req, res);
+    if (!req.session.username)
+    {
+      res.render('index', {error : 'You are not logged in'});
+    }
+    else {
+      msgModel.getChat(req, res);
+    }
   }

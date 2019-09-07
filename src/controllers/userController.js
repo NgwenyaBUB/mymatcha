@@ -3,19 +3,24 @@ const userModel = require("../models/userModel");
 exports.getUserController = (req, res, next) => {
   const succ = userModel.login(req, res);
   // console.log(succ, " : done");
-//  res.render("menu", { meals });
-    // res.send("done");
+  //  res.render("menu", { meals });
+  // res.send("done");
 };
 
 exports.getRegisterController = (req, res, next) => {
-    userModel.register(req);
-    // console.log(succ, " : done");
+  userModel.register(req);
+  // console.log(succ, " : done");
   //  res.render("menu", { meals });
-      res.send("done");
-  };
+  res.send("done");
+};
 
 exports.getUsersWithin10kms = (req, res, next) => {
-  userModel.getUsersWithin10km(req, res);
+  if (!req.session.username) {
+    res.render('index', { error: 'You are not logged in' });
+  }
+  else {
+    userModel.getUsersWithin10km(req, res);
+  }
 }
 
 exports.likePic = (req, res, next) => {
@@ -27,7 +32,12 @@ exports.unlikePic = (req, res, next) => {
 }
 
 exports.findUsers = (req, res, next) => {
-  userModel.findUsers(req, res);
+  if (!req.session.username) {
+    res.render('index', { error: 'You are not logged in' });
+  }
+  else {
+    userModel.findUsers(req, res);
+  }
 }
 
 exports.likeUser = (req, res, next) => {
