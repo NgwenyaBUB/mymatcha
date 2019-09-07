@@ -16,6 +16,16 @@
 			padding: 0;
 		}
 
+		.footer {
+			position: fixed;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+			color: black;
+			text-align: center;
+			background-color: white;
+		}
+
 		#map {
 			position: absolute;
 			top: 0;
@@ -61,11 +71,11 @@
 			font-family: 'Open Sans', sans-serif;
 		}
 	</style>
-	<title>Profile</title>
+	<title>Find</title>
 </head>
 
 <body style="background-image: url('/img/back6.jpg'); background-size: cover; overflow: hidden;">
-	<div style="width: 100%; position: absolute; z-index: -1;  height:100%; background-color:  pink; opacity: 0.8;">
+	<div style="width: 100%; position: absolute; z-index: -1;  height: 100vh; background-color:  pink; opacity: 0.8;">
 		<nav role="navigation">
 			<div class="nav-wrapper container"><a id="logo-container" href="/home" class="brand-logo">MATCHA</a>
 				<a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
@@ -98,10 +108,18 @@
 		<h1 style="text-align:center">Find</h1>
 		<div class="row">
 			<div class="col s3 offset-s4">
-				<a href="/findlist" class="waves-effect waves-light btn"><i class="material-icons right">view_list</i>List View</a>
+				<a href="/findlist" class="waves-effect waves-light btn"><i
+						class="material-icons right">view_list</i>List View</a>
 			</div>
 		</div>
-		<div id='map' style="position:relative; width:80%; height: 80%; left: 10%;"></div>
+		<div id='map' style="position:relative; width:80%; height: 75%; left: 10%;"></div>
+		<div class="footer">
+			<div class="footer-copyright">
+				<div class="container">
+					© 2019 by bngweny
+				</div>
+			</div>
+		</div>
 		<script>
 			mapboxgl.accessToken = 'pk.eyJ1IjoiYm5nd2VueSIsImEiOiJjanBwZm1ubzkwM3RpNDNteHB1cTNjNDRmIn0.e8kvP8D0k5s08tT6OkEp8A';
 			const map = new mapboxgl.Map({
@@ -201,5 +219,6 @@
 
 	</script>
 </body>
+
 
 </html>

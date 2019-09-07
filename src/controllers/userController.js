@@ -3,19 +3,23 @@ const userModel = require("../models/userModel");
 exports.getUserController = (req, res, next) => {
   const succ = userModel.login(req, res);
   // console.log(succ, " : done");
-//  res.render("menu", { meals });
-    // res.send("done");
+  //  res.render("menu", { meals });
+  // res.send("done");
 };
 
 exports.getRegisterController = (req, res, next) => {
-    userModel.register(req);
-    // console.log(succ, " : done");
+  userModel.register(req);
+  // console.log(succ, " : done");
   //  res.render("menu", { meals });
-      res.send("done");
-  };
+};
 
 exports.getUsersWithin10kms = (req, res, next) => {
-  userModel.getUsersWithin10km(req, res);
+  if (!req.session.username) {
+    res.render('index', { error: 'You are not logged in' });
+  }
+  else {
+    userModel.getUsersWithin10km(req, res);
+  }
 }
 
 exports.likePic = (req, res, next) => {
@@ -27,7 +31,12 @@ exports.unlikePic = (req, res, next) => {
 }
 
 exports.findUsers = (req, res, next) => {
-  userModel.findUsers(req, res);
+  if (!req.session.username) {
+    res.render('index', { error: 'You are not logged in' });
+  }
+  else {
+    userModel.findUsers(req, res);
+  }
 }
 
 exports.likeUser = (req, res, next) => {
@@ -40,4 +49,44 @@ exports.unlikeUser = (req, res, next) => {
 
 exports.complete = (req, res, next) => {
   userModel.complete(req, res);
+}
+
+exports.sortbyage = (req, res, next) => {
+  if (!req.session.username) {
+    res.render('index', { error: 'You are not logged in' });
+  }
+  else {
+    userModel.sortByAge(req, res);
+  }
+}
+
+exports.sortbytags = (req, res, next) => {
+  if (!req.session.username) {
+    res.render('index', { error: 'You are not logged in' });
+  }
+  else {
+    userModel.sortByTags(req, res);
+  }
+}
+
+exports.sortbylocation = (req, res, next) => {
+  if (!req.session.username) {
+    res.render('index', { error: 'You are not logged in' });
+  }
+  else {
+    userModel.sortByLocation(req, res);
+  }
+}
+
+exports.sortbyrating = (req, res, next) => {
+  if (!req.session.username) {
+    res.render('index', { error: 'You are not logged in' });
+  }
+  else {
+    userModel.sortByRating(req, res);
+  }
+}
+
+exports.visit = (req, res, next) => {
+  userModel.visituser(req, res);
 }

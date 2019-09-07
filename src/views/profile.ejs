@@ -28,8 +28,15 @@
 			color: white;
 		}
 
-		/* #292929 */
-		/* #ed5b01 ffaf06*/
+		.footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            color: black;
+            text-align: center;
+            background-color: white;
+        }
 	</style>
 	<title>Profile</title>
 </head>
@@ -65,23 +72,6 @@
 
 			</div>
 		</nav>
-		<!-- <h1 style="text-align:center">Profile</h1> -->
-
-		<!--	<div class="row">
-			<form class="col s12">
-				<div class="row">
-					<div class="input-field col s6">
-						<input placeholder="Placeholder" id="firstname" type="text" class="validate">
-						<label for="firstname">First Name</label>
-					</div>
-				</div>
-			</form>
-		 </div> -->
-		<!-- <ul id="slide-out" class="side-nav fixed">
-				<li><a href="#!">First Sidebar Link</a></li>
-				<li><a href="#!">Second Sidebar Link</a></li>
-		</ul>
-		<a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a> -->
 		<div class="row">
 			<div class="col s4 black" style="min-height: 100vh;">
 				<form>
@@ -110,31 +100,6 @@
 							<label for="username">Username</label>
 						</div>
 					</div>
-					<!-- <div class="row">
-						<div class="input-field col s12">
-							<select name="gender">
-								<option value="male" selected>Male</option>
-								<option value="female">Female</option>
-							</select>
-							<label>Gender</label>
-						</div>
-					</div>
-					<div class="row">
-						<div class="input-field col s12">
-							<select name="sexual">
-								<option value="men">Men</option>
-								<option value="women">Women</option>
-								<option value="both" selected>Both</option>
-							</select>
-							<label>Sexual Preference</label>
-						</div>
-					</div>
-					<div class="row">
-						<div class="input-field col s12 white-text">
-							<input placeholder="" id="location" type="text" class="validate">
-							<label for="last_name">Location</label>
-						</div>
-					</div> -->
 					<div class="row white-text">
 						<div class="chips chips-initial"></div>
 					</div>
@@ -180,6 +145,13 @@
 						<label for="autocomplete-input">Location</label>
 					</div>
 				</div>
+				<div class="row">
+					<p> Viewed by :
+						<% for (const iterator of me.viewed) {%>
+							<%= iterator%> &nbsp;|
+						<% } %>
+					</p>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -208,6 +180,13 @@
 		$(".dropdown-button").dropdown();
 		$(".button-collapse").sideNav();
 	</script>
+	<div class="footer">
+			<div class="footer-copyright">
+				<div class="container">
+					© 2019 by bngweny
+				</div>
+			</div>
+		</div>
 </body>
 
 </html>

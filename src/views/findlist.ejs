@@ -60,12 +60,21 @@
 			text-align: center;
 			font-family: 'Open Sans', sans-serif;
 		}
+		.footer {
+			position: fixed;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+			color: black;
+			text-align: center;
+			background-color: white;
+		}
 	</style>
-	<title>Profile</title>
+	<title>Find</title>
 </head>
 
 <body style="background-image: url('/img/back6.jpg'); background-size: cover; overflow: hidden;">
-	<div style="width: 100%; position: absolute; z-index: -1;  height:100%; background-color:  pink; opacity: 0.8;">
+	<div style="width: 100%; position: absolute; z-index: -1; height: 100vh; background-color:  pink; opacity: 0.8;">
 		<nav role="navigation">
 			<div class="nav-wrapper container"><a id="logo-container" href="/home" class="brand-logo">MATCHA</a>
 				<a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
@@ -77,10 +86,14 @@
 				</ul>
 				<ul class="right hide-on-med-and-down">
 					<li><a href="/find">Find</a></li>
-					<li><a href="#">Notifications<span class="new badge">0</span></a></li>
+					<li><a class="dropdown-button" href="#" data-activates="dropdown3">Notifications<span class="new badge">0</span></a></li>
+
 					<li><a href="/chat">Messages<span class="new badge">0</span></a></li>
 					<li><a class="dropdown-button" href="#!" data-activates="dropdown1">Settings<i
 								class="material-icons right">arrow_drop_down</i></a></li>
+				</ul>
+				<ul id="dropdown3" class="dropdown-content">
+						<li><a href="#!">Welcome to matcha</a></li>
 				</ul>
 				<ul class="side-nav" id="mobile-demo">
 					<li><a href="/find">Find</a></li>
@@ -112,6 +125,12 @@
 
 					<input class="with-gap" name="group1" type="radio" value="tags" id="radiotag" />
 					<label for="radiotag" class="black-text">By Tag</label>
+
+					<input class="with-gap" name="group1" type="radio" value="age" id="radioage" />
+					<label for="radioage" class="black-text">By Age</label>
+
+					<input class="with-gap" name="group1" type="radio" value="location" id="radiolocation" />
+					<label for="radiolocation" class="black-text">By Location</label>
 				</div>
 				<button class="btn waves-effect waves-light" type="submit" name="action">Search
 					<i class="material-icons right">send</i>
@@ -119,13 +138,14 @@
 			</form>
 			<div class="col s3 offset-s2">
 				<!-- Dropdown Trigger -->
-				<a class='dropdown-button btn' href='#' data-activates='dropdown2'>Filter</a>
+				<a class='dropdown-button btn' href='#' data-activates='dropdown2'>Sort</a>
 
 				<!-- Dropdown Structure -->
 				<ul id='dropdown2' class='dropdown-content'>
-					<li><a href="#!"><i class="material-icons">location_on</i>Location</a></li>
-					<li><a href="#!"><i class="material-icons">people</i>Fame Rating</a></li>
-					<li><a href="#!"><i class="material-icons">today</i>Age</a></li>
+					<li><a href="/sortbylocation"><i class="material-icons">location_on</i>Location</a></li>
+					<li><a href="/sortbyrating"><i class="material-icons">people</i>Fame Rating</a></li>
+					<li><a href="/sortbyage"><i class="material-icons">today</i>Age</a></li>
+					<li><a href="/sortbytag">Tags</a></li>
 				</ul>
 			</div>
 		</div>
@@ -141,12 +161,20 @@
 						</p>
 						<p>Location: <%=users[i].additional.userlocation%></p>
 						<p>Fame Rating: </p>
+						<p>Tags: <%=users[i].additional.tags%></p>
 						<a href="/user?username=<%=users[i].username %>" class="secondary-content"><i
-								class="material-icons">whatshot</i></a>
+								class="material-icons black-text">whatshot</i></a>
 					</li>
 					<br />
 					<% } %>
 				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="footer">
+		<div class="footer-copyright">
+			<div class="container">
+				© 2019 by bngweny
 			</div>
 		</div>
 	</div>
@@ -159,12 +187,6 @@
 		$(".dropdown-button").dropdown();
 		$(".button-collapse").sideNav();
 		$('.carousel.carousel-slider').carousel({ fullWidth: true });
-		function _calculateAge(birthday) { // birthday is a date
-			var ageDifMs = Date.now() - birthday.getTime();
-			var ageDate = new Date(ageDifMs); // miliseconds from epoch
-			return Math.abs(ageDate.getUTCFullYear() - 1970);
-		}
-		
 	</script>
 </body>
 

@@ -26,6 +26,11 @@ exports.appRoute = router => {
   router.get("/unlikePicture", userController.unlikePic);
   router.get("/likeUser", userController.likeUser);
   router.get("/unlikeUser", userController.unlikeUser);
+  router.get("/sortbyage", userController.sortbyage);
+  router.get("/sortbytag", userController.sortbytags);
+  router.get("/sortbylocation", userController.sortbylocation);
+  router.get("/sortbyrating", userController.sortbyrating);
+  router.get("/visituser", userController.visit);
 
   router.post('/logina', userController.getUserController);
   router.post('/registera', userController.getRegisterController);

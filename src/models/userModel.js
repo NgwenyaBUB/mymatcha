@@ -1,6 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 var passwordHash = require('password-hash');
 const coordinatesModel = require("../models/coordinatesModel");
+const mediaModel = require("../models/mediaModel");
 
 MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
     // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
@@ -36,14 +37,14 @@ exports.register = (req, res) => {
             liked: [],
             blocklist: [],
             additional: {
-                gender: "",
-                sexualpreferance: "",
-                bio: "",
-                tags: [],
-                userlocation: "",
-                latitude: 0,
-                longitude: 0,
-                dob : ""
+                // gender: "",
+                // sexualpreferance: "",
+                // bio: "",
+                // tags: [],
+                // userlocation: "",
+                // latitude: 0,
+                // longitude: 0,
+                // dob: ""
             },
             lastseen: 0,
             status: "offline"
@@ -56,12 +57,12 @@ exports.register = (req, res) => {
                     if (err) { console.log("yeah reconnect bru"); throw err; }
                     console.log("1 document inserted");
                 });
-                req.session.username = req.body.username;
+                req.session.tempuser = req.body.username;
                 res.render('completeprofile');
             }
             else {
                 console.log("username exists");
-                res.sendStatus(200);
+                res.render('login');
             }
             db.close();
         });
@@ -100,9 +101,25 @@ exports.login = (req, res) => {
                 // console.log("password: ", req.body.pass);
                 // var hashedPassword = passwordHash.generate(req.body.pass, {algorithm: 'whirlpool', saltLength: 8, iterations: 1});
                 if (passwordHash.verify(req.body.pass, result[0]["password"])) {
-                    req.session.username = req.body.username;
-                    exports.changeStatus(req.session.username, "online");
-                    exports.homeMedia(req, res, req.body.username);
+                    if (!result[0]["additional"].sexualpreferance) {
+                        req.session.tempuser = req.body.username;
+                        res.render('completeprofile')
+                    } else {
+                        req.session.username = req.body.username;
+                        if (result[0].additional.sexualpreference == "both") {
+                            req.session.sexualpreference = "both";
+                        }
+                        else if (result[0].additional.sexualpreference == "women") {
+                            req.session.sexualpreference = "female";
+                        }
+                        else if (result[0].additional.sexualpreference == "men") {
+                            req.session.sexualpreference
+                                = "male";
+                        }
+                        coordinatesModel.getLocation(req, res);
+                        exports.changeStatus(req.session.username, "online");
+                        exports.homeMedia(req, res, req.body.username);
+                    }
                 }
             }
             db.close();
@@ -139,7 +156,19 @@ exports.getUsersWithin10km = (req, res) => {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
-        dbo.collection("users").find().toArray(function (err, result) {
+        var query = {
+            "$or": [{
+                'additional.gender': "male"
+            }, {
+                'additional.gender': "female"
+            }, { "username": req.session.username }]
+        };
+        if (req.session.sexualpreference != "both") {
+            query = {
+                "$or": [{ "additional.gender": req.session.sexualpreference }, { "username": req.session.username }]
+            }
+        }
+        dbo.collection("users").find(query).toArray(function (err, result) {
             if (err) throw err;
             if (result.length == 0) {
                 console.log("NO USERS FOUND!!!");
@@ -197,10 +226,27 @@ exports.user = (req, res) => {
                         if (usr.liked.includes(req.session.username)) {
                             liked = "Unlike";
                         }
+                        exports.visituser(req);
                         res.render('user', { user: usr, media: result1, likes: favourite, disabled: disabled, liked: liked });
                     });
                 }
             }
+            db.close();
+        });
+    });
+}
+
+exports.visituser = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.query.username };
+        var newvalues = { $addToSet: { viewed: req.session.username } };
+        dbo.collection("media").updateOne(query, newvalues, function (err, res) {
+            if (err) throw err;
+            console.log(res.result.nModified + " document(s) updated");
+            // console.log(req.query.username, req.query.id, req.session.username, "yah")
             db.close();
         });
     });
@@ -244,7 +290,19 @@ exports.getListUsers = (req, res) => {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
-        dbo.collection("users").find().toArray(function (err, result) {
+        var query = {
+            "$or": [{
+                'additional.gender': "male"
+            }, {
+                'additional.gender': "female"
+            }, { "username": req.session.username }]
+        };
+        if (req.session.sexualpreference != "both") {
+            query = {
+                "$or": [{ "additional.gender": req.session.sexualpreference }, { "username": req.session.username }]
+            }
+        }
+        dbo.collection("users").find(query).toArray(function (err, result) {
             if (err) throw err;
             if (result.length == 0) {
                 console.log("NO USERS FOUND!!!");
@@ -279,6 +337,12 @@ exports.findUsers = (req, res) => {
         var query = { username: req.body.search };
         if (req.body.group1 == "tags") {
             exports.findByTag(req, res);
+        }
+        else if (req.body.group1 == "age") {
+            exports.findByAge(req, res);
+        }
+        else if (req.body.group1 == "location") {
+            exports.findByLocation(req, res);
         }
         else {
             dbo.collection("users").find().toArray(function (err, result) {
@@ -320,7 +384,7 @@ exports.findByTag = (req, res) => {
             for (const iterator of result) {
                 if (iterator.username != req.session.username) {
                     for (const tag of iterator.additional.tags) {
-                        if (tag.includes(req.body.search)) {
+                        if (tag.toLowerCase().includes(req.body.search.toLowerCase())) {
                             users.push(iterator);
                             break;
                         }
@@ -334,6 +398,221 @@ exports.findByTag = (req, res) => {
                 }
 
                 res.render('findlist', { users: users, media: mymedia });
+            });
+        });
+    });
+}
+
+exports.findByLocation = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, (err, db) => {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        dbo.collection("users").find().toArray(function (err, result) {
+            var users = [];
+            for (const iterator of result) {
+                if (iterator.username != req.session.username) {
+                    if (iterator.additional.userlocation.toLowerCase().includes(req.body.search.toLowerCase())) {
+                        users.push(iterator);
+                    }
+                }
+            }
+            dbo.collection("media").find().toArray((err, result1) => {
+                var mymedia = {};
+                for (const iterator of result1) {
+                    mymedia[iterator.username] = iterator;
+                }
+
+                res.render('findlist', { users: users, media: mymedia });
+            });
+        });
+    });
+}
+
+exports._calculateAge = function (birthday) { // birthday is a date
+    var ageDifMs = Date.now() - birthday.getTime();
+    var ageDate = new Date(ageDifMs); // miliseconds from epoch
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
+exports.findByAge = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, (err, db) => {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        dbo.collection("users").find().toArray(function (err, result) {
+            var outusers = [];
+            for (const iterator of result) {
+                if (iterator.username != req.session.username) {
+                    if (exports._calculateAge(new Date(iterator.additional.dob)) == req.body.search) {
+                        outusers.push(iterator);
+                    }
+                }
+            }
+            dbo.collection("media").find().toArray((err, result1) => {
+                var mymedia = {};
+                for (const iterator of result1) {
+                    mymedia[iterator.username] = iterator;
+                }
+
+                res.render('findlist', { users: outusers, media: mymedia });
+            });
+        });
+    });
+}
+
+exports.sortByAge = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, (err, db) => {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = {
+            "$or": [{
+                'additional.gender': "male"
+            }, {
+                'additional.gender': "female"
+            }, { "username": req.session.username }]
+        };
+        if (req.session.sexualpreference != "both") {
+            query = {
+                "$or": [{ "additional.gender": req.session.sexualpreference }, { "username": req.session.username }]
+            }
+        }
+        dbo.collection("users").find(query).toArray(function (err, result) {
+            var outusers = [];
+            var temp = result;
+            outusers = temp.sort(function (a, b) {
+                var ageA = exports._calculateAge(new Date(a.additional.dob));
+                var ageB = exports._calculateAge(new Date(b.additional.dob));
+                return (ageA > ageB ? 1 :
+                    ageA == ageB ? 0 : -1);
+            });
+
+            dbo.collection("media").find().toArray((err, result1) => {
+                var mymedia = {};
+                for (const iterator of result1) {
+                    mymedia[iterator.username] = iterator;
+                }
+
+                res.render('findlist', { users: outusers, media: mymedia });
+            });
+        });
+    });
+}
+
+exports.sortByTags = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, (err, db) => {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = {
+            "$or": [{
+                'additional.gender': "male"
+            }, {
+                'additional.gender': "female"
+            }, { "username": req.session.username }]
+        };
+        if (req.session.sexualpreference != "both") {
+            query = {
+                "$or": [{ "additional.gender": req.session.sexualpreference }, { "username": req.session.username }]
+            }
+        }
+        dbo.collection("users").find(query).toArray(function (err, result) {
+            var outusers = [];
+            var temp = result;
+            outusers = temp.sort(function (a, b) {
+                var tagA = a.additional.tags.length;
+                var tagB = b.additional.tags.length;
+                return (tagA < tagB ? 1 :
+                    tagA == tagB ? 0 : -1);
+            });
+
+            dbo.collection("media").find().toArray((err, result1) => {
+                var mymedia = {};
+                for (const iterator of result1) {
+                    mymedia[iterator.username] = iterator;
+                }
+
+                res.render('findlist', { users: outusers, media: mymedia });
+            });
+        });
+    });
+}
+
+exports.sortByRating = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, (err, db) => {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = {
+            "$or": [{
+                'additional.gender': "male"
+            }, {
+                'additional.gender': "female"
+            }, { "username": req.session.username }]
+        };
+        if (req.session.sexualpreference != "both") {
+            query = {
+                "$or": [{ "additional.gender": req.session.sexualpreference }, { "username": req.session.username }]
+            }
+        }
+        dbo.collection("users").find(query).toArray(function (err, result) {
+            var outusers = [];
+            var temp = result;
+            console.log("location", req.session.location);
+            outusers = temp.sort((a, b) => {
+                var tagA = a.viewed.length;
+                var tagB = b.viewed.length;
+                return (tagA < tagB ? 1 :
+                    tagA == tagB ? 0 : -1);
+            });
+
+            dbo.collection("media").find().toArray((err, result1) => {
+                var mymedia = {};
+                for (const iterator of result1) {
+                    mymedia[iterator.username] = iterator;
+                }
+
+                res.render('findlist', { users: outusers, media: mymedia });
+            });
+        });
+    });
+}
+
+exports.sortByLocation = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, (err, db) => {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = {
+            "$or": [{
+                'additional.gender': "male"
+            }, {
+                'additional.gender': "female"
+            }, { "username": req.session.username }]
+        };
+        if (req.session.sexualpreference != "both") {
+            query = {
+                "$or": [{ "additional.gender": req.session.sexualpreference }, { "username": req.session.username }]
+            }
+        }
+        dbo.collection("users").find(query).toArray(function (err, result) {
+            var outusers = [];
+            var temp = result;
+            outusers = temp.sort(function (a, b) {
+                var tagA = coordinatesModel.getDistance({ lat: a.additional.latitude, lon: a.additional.longitude }, { lat: req.session.location.lat, lon: req.session.location.lon });
+                var tagB = coordinatesModel.getDistance({ lat: b.additional.latitude, lon: b.additional.longitude }, { lat: req.session.location.lat, lon: req.session.location.lon });
+                return (tagA < tagB ? 1 :
+                    tagA == tagB ? 0 : -1);
+            });
+
+            dbo.collection("media").find().toArray((err, result1) => {
+                var mymedia = {};
+                for (const iterator of result1) {
+                    mymedia[iterator.username] = iterator;
+                }
+
+                res.render('findlist', { users: outusers, media: mymedia });
             });
         });
     });
@@ -442,7 +721,7 @@ exports.complete = (req, res) => {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
-        var query = { username: req.session.username };
+        var query = { username: req.session.tempuser };
         var newvalues = {
             $set: {
                 additional: {
@@ -457,26 +736,17 @@ exports.complete = (req, res) => {
                 }
             }
         };
-
-        dbo.collection("users").updateOne(query, newvalues, function (err, res) {
-            if (err) throw err;
-            console.log(res.result.nModified + " document(s) updated");
-        });
-
+        if (!req.session.tempuser) {
+            res.render('index');
+        }
+        else {
+            dbo.collection("users").updateOne(query, newvalues, function (err, res) {
+                if (err) throw err;
+                mediaModel.saveImages(req, res, req.session.tempuser);
+                console.log(res.result.nModified + " document(s) updated");
+            });
+            res.render('login');
+        }
     });
-    // var out = req.body.gender + "<br/>";
-    // out += req.body.sexual + "<br/>";
-    // out += req.body.bio + "<br/>";
-    // out += req.body.tagsinput + "<br/>";
-    // // out += req.body.bio;
-    // // for (key in req.body)
-    // // {
-    // //     out += (key +"<br/>");
-    // // }
-    // out += req.body.picture + "<br/>";
-    // out += req.body.location + "<br/>";
-    // out += req.body.birthdate;
-    // // console.log(hashedPassword);
-    res.send(out);
-
-}
+}//"pizza,foodie,soccer,techie,downers,kanye"
+//"I am a shop owner and enjoy dancing in my spare time"
