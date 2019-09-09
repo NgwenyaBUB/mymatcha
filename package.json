@@ -17,6 +17,7 @@
     "express-session": "^1.16.2",
     "mongodb": "^3.1.10",
     "node": "^11.0.0",
+    "nodemailer": "^6.3.0",
     "password-hash": "^1.2.2",
     "request": "^2.88.0"
   },

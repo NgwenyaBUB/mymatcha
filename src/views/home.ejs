@@ -29,7 +29,7 @@
 				<a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
 				<ul id="dropdown1" class="dropdown-content">
 					<li><a href="/profile">Profile</a></li>
-					<li><a href="#!">Reset Password</a></li>
+					<li><a href="#!" onclick="resetPass()">Reset Password</a></li>
 					<li class="divider"></li>
 					<li><a href="/logout">Logout</a></li>
 				</ul>
@@ -51,7 +51,6 @@
 					
 				</ul> 
 				<a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a> -->
-
 			</div>
 		</nav>
 		<h1 style="text-align:center">WELCOME TO MATCHA</h1>
@@ -83,7 +82,8 @@
 			</div>
 		</div>
 		<div class="modal-footer">
-			<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Dismiss</a>
+			<a onclick="allNotifications()" class="modal-action waves-effect waves-green btn-flat">All Notifications</a>
+			<a onclick="dismissModal()" class="modal-action modal-close waves-effect waves-green btn-flat">Dismiss</a>
 		</div>
 	</div>
 	<!-- <script src="http://localhost:80/jquery/jquery-3.1.1.js"></script> -->
@@ -100,23 +100,6 @@
 			// the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
 			$('.modal').modal();
 		});
-		// 		(function($){
-		//   $(function(){
-
-		//     $('.sidenav').sidenav();
-
-		//   }); // end of document ready
-		// })(jQuery); // end of jQuery name space
-
-		// var instance = M.Carousel.init({
-		//     fullWidth: true
-		//   });
-
-		// Or with jQuery
-
-		// $('.carousel.carousel-slider').carousel({
-		//   fullWidth: true
-		// });
 		var msgcount = '0';
 		$(".dropdown-button").dropdown();
 		$(".button-collapse").sideNav();
@@ -146,20 +129,22 @@
 		}
 
 		$(document).ready(setInterval(polling, 3000));
+		
+		function dismissModal() {
+			$.ajax({
+				type: 'GET',
+				url: '/readNotifications',
+				success: function (data) {
+					console.log("done");
+				}
+			});
+		}
 
 		$("#notiflnk").on("click", function () {
-			// $.ajax({
-			// 	type: 'GET',
-			// 	url: '/readNotifications',
-			// 	success: function (data) {
-			// 		// console.log("done", data);
-			// 	}
-			// });
 			$.ajax({
 				type: 'GET',
 				url: '/notifications',
 				success: function (data) {
-					console.log(data);
 					$("#notif").empty();
 					for (const iterator of data) {
 						$("#notif").append('<li class="collection-item">' +iterator.from +' ' + iterator.type + ' on '+   new Date(iterator.timestamp * 1000) + '</li>');
@@ -167,6 +152,28 @@
 				}
 			});
 		});
+
+		function allNotifications() {
+			$.ajax({
+				type: 'GET',
+				url: '/allNotifications',
+				success: function (data) {
+					$("#notif").empty();
+					for (const iterator of data) {
+						$("#notif").append('<li class="collection-item">' +iterator.from +' ' + iterator.type + ' on '+   new Date(iterator.timestamp * 1000) + '</li>');
+					}
+				}
+			});
+		}
+		function resetPass() {
+			$.ajax({
+				type: 'GET',
+				url: '/resetpassemail',
+				success: function (data) {
+					Materialize.toast('Check email for password reset link!', 4000)
+				}
+			});
+		}
 	</script>
 	<div class="footer">
 		<div class="footer-copyright">

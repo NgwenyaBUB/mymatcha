@@ -2,6 +2,7 @@ const userModel = require("../models/userModel");
 const coordinatesModel = require("../models/coordinatesModel");
 const homeModel = require("../models/homeModel");
 const notifModel = require("../models/notificationsModel");
+const msgModel = require("../models/messageModel");
 
 exports.getLoginPage = (req, res, next) => {
   res.render("login", {error : null});
@@ -91,4 +92,22 @@ exports.getHomePage = (req, res, next) => {
 
   exports.notifications = (req, res, next) => {
     notifModel.getNotif(req, res);
+  }
+
+  exports.allNotifications = (req, res, next) => {
+    notifModel.getAllNotif(req, res);
+  }
+
+  exports.complete = (req, res, next) => {
+    userModel.validateRegistration(req, res);
+  }
+
+  exports.test = (req, res, next) => 
+  {
+    req.session.tempuser = "umasiza123";
+    msgModel.newUserEmail(req, res);
+  }
+
+  exports.resetpassemail = (req, res, next) => {
+    msgModel.resetPassword(req, res);
   }

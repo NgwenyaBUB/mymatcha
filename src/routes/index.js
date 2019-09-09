@@ -13,10 +13,17 @@ exports.appRoute = router => {
   router.get("/getNotifications", homeController.getNotifications);
   router.get("/readNotifications", homeController.readNotifications);
   router.get("/notifications", homeController.notifications);
+  router.get("/allNotifications", homeController.allNotifications);
   router.get("/completeprofile", homeController.completeprofile);
   router.get("/user", homeController.getUser);
   router.get("/findlist", homeController.getFindListPage);
   router.get("/logout", homeController.logout);
+  router.get("/complete", homeController.complete);
+  router.get("/resetpassemail", homeController.resetpassemail);
+
+  /* =================== DEBUG*/
+  router.get("/test", homeController.test);
+  /*====================== END OF DEBUG*/
 
   router.get("/chat", msgController.getChat);
   router.get("/getMessages", msgController.getMessages);
@@ -32,6 +39,7 @@ exports.appRoute = router => {
   router.get("/sortbylocation", userController.sortbylocation);
   router.get("/sortbyrating", userController.sortbyrating);
   router.get("/visituser", userController.visit);
+  router.get("/resetPass", userController.resetPass);
 
   router.post('/logina', userController.getUserController);
   router.post('/registera', userController.getRegisterController);
