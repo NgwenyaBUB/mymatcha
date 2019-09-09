@@ -38,7 +38,7 @@ exports.register = (req, res) => {
             blocklist: [],
             additional: {
                 // gender: "",
-                // sexualpreferance: "",
+                // sexualpreference: "",
                 // bio: "",
                 // tags: [],
                 // userlocation: "",
@@ -62,7 +62,7 @@ exports.register = (req, res) => {
             }
             else {
                 console.log("username exists");
-                res.render('login');
+                res.render('login', {error : null});
             }
             db.close();
         });
@@ -95,13 +95,14 @@ exports.login = (req, res) => {
             if (err) throw err;
             if (result.length == 0) {
                 console.log("USERNAME IS DOESN'T EXIST");
+                res.render('login', {error: "USERNAME DOESN'T EXIST"});
             }
             else {
                 // console.log("username: ", result[0]["username"]);
                 // console.log("password: ", req.body.pass);
                 // var hashedPassword = passwordHash.generate(req.body.pass, {algorithm: 'whirlpool', saltLength: 8, iterations: 1});
-                if (passwordHash.verify(req.body.pass, result[0]["password"])) {
-                    if (!result[0]["additional"].sexualpreferance) {
+                if (passwordHash.verify(req.body.password, result[0]["password"])) {
+                    if (!result[0]["additional"].sexualpreference) {
                         req.session.tempuser = req.body.username;
                         res.render('completeprofile')
                     } else {
@@ -120,6 +121,8 @@ exports.login = (req, res) => {
                         exports.changeStatus(req.session.username, "online");
                         exports.homeMedia(req, res, req.body.username);
                     }
+                } else {
+                    res.render('login', {error: "Wrong password!"});
                 }
             }
             db.close();
@@ -726,7 +729,7 @@ exports.complete = (req, res) => {
             $set: {
                 additional: {
                     gender: req.body.gender,
-                    sexualpreferance: req.body.sexual,
+                    sexualpreference: req.body.sexual,
                     bio: req.body.bio,
                     tags: req.body.tagsinput,
                     userlocation: req.body.location,
@@ -737,7 +740,7 @@ exports.complete = (req, res) => {
             }
         };
         if (!req.session.tempuser) {
-            res.render('index');
+            res.render('index',{error: "You are not logged in"});
         }
         else {
             dbo.collection("users").updateOne(query, newvalues, function (err, res) {
@@ -745,7 +748,7 @@ exports.complete = (req, res) => {
                 mediaModel.saveImages(req, res, req.session.tempuser);
                 console.log(res.result.nModified + " document(s) updated");
             });
-            res.render('login');
+            res.render('login', {error : null});
         }
     });
 }//"pizza,foodie,soccer,techie,downers,kanye"

@@ -38,7 +38,7 @@ router.get("/", (req, res, next) => {
   sess = req.session;
   sess.username = "myname its";
   // return res.send("Hello There");
-  return res.render('index');
+  return res.render('index', {error: null});
 });
 
 router.use((err, req, res, next) => {

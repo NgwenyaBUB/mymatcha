@@ -1,9 +1,10 @@
 const userModel = require("../models/userModel");
 const coordinatesModel = require("../models/coordinatesModel");
 const homeModel = require("../models/homeModel");
+const notifModel = require("../models/notificationsModel");
 
 exports.getLoginPage = (req, res, next) => {
-  res.render("login");
+  res.render("login", {error : null});
 };
 
 exports.getHomePage = (req, res, next) => { 
@@ -54,7 +55,7 @@ exports.getHomePage = (req, res, next) => {
       res.send("0");
     }
     else {
-      homeModel.notifcount(req, res);
+      notifModel.notifcount(req, res);
     }
   };
 
@@ -64,7 +65,7 @@ exports.getHomePage = (req, res, next) => {
       res.send("0");
     }
     else {
-      homeModel.closenotif(req, res);
+      notifModel.closenotif(req, res);
     }
   };
 
@@ -85,5 +86,9 @@ exports.getHomePage = (req, res, next) => {
   exports.logout = (req, res, next) => {
     userModel.changeStatus(req.session.username, "offline");
     req.session.username = "";
-    res.render('index');
+    res.render('index', {error: null});
+  }
+
+  exports.notifications = (req, res, next) => {
+    notifModel.getNotif(req, res);
   }

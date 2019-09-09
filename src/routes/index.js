@@ -12,6 +12,7 @@ exports.appRoute = router => {
   router.get("/profile", homeController.getProfilePage);
   router.get("/getNotifications", homeController.getNotifications);
   router.get("/readNotifications", homeController.readNotifications);
+  router.get("/notifications", homeController.notifications);
   router.get("/completeprofile", homeController.completeprofile);
   router.get("/user", homeController.getUser);
   router.get("/findlist", homeController.getFindListPage);

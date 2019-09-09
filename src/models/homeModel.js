@@ -33,43 +33,6 @@ var MongoClient = require('mongodb').MongoClient;
 //     }, 5000);
 // })();
 
-exports.notifcount = (req, res) => {
-    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true , useUnifiedTopology: true}, function (err, db) {
-        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
-        if (err) throw err;
-        var dbo = db.db("matcha");
-        var query = { username: req.session.username,  viewed: "false"};
-        dbo.collection("notification").find(query).toArray(function (err, result) {
-            if (err) throw err;
-            if (result.length == 0) {
-                // console.log("USERNAME IS DOESN'T EXIST", result);
-                res.send("0");
-            }
-            else {
-                // console.log(result);
-                res.send("" + result.length);
-            }
-            db.close();
-        });
-    });
-}
-
-exports.closenotif = (req, resp) => {
-    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function(err, db) {
-// MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
-        if (err) throw err;
-        var dbo = db.db("matcha");
-        var query = { username: req.session.username,  viewed: "false"};
-        var newvalues = {$set: {"viewed": "true"} };
-        dbo.collection("notification").updateMany(query, newvalues, function(err, res) {
-            if (err) throw err;
-            // console.log(res.result.nModified +" document(s) updated");
-            db.close();
-            resp.send("done");
-        });
-      });
-}
-
 exports.getMyProfile = (req, res) => {
     MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true , useUnifiedTopology: true}, function (err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
