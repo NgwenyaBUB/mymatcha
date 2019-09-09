@@ -8,7 +8,7 @@ exports.getUserController = (req, res, next) => {
 };
 
 exports.getRegisterController = (req, res, next) => {
-  userModel.register(req);
+  userModel.register(req, res);
   // console.log(succ, " : done");
   //  res.render("menu", { meals });
 };
@@ -89,4 +89,8 @@ exports.sortbyrating = (req, res, next) => {
 
 exports.visit = (req, res, next) => {
   userModel.visituser(req, res);
+}
+
+exports.resetPass = (req, res, next) => {
+  userModel.resetPassword(req, res);
 }

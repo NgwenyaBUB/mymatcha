@@ -1,4 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
+const nodemailer = require('nodemailer');
+var mail = require("../config/nodemailer.js");
 
 exports.getAllMessages = (req, res) => {
     MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
@@ -80,11 +82,10 @@ exports.getChat = (req, res) => {
             var allusers = {};
             if (err) throw err;
             for (const iterator of result1) {
-                if (iterator.username == req.session.username)
-                {
+                if (iterator.username == req.session.username) {
                     myusers = iterator;
                 }
-                else{
+                else {
                     allusers[iterator.username] = iterator;
                 }
             }
@@ -96,9 +97,56 @@ exports.getChat = (req, res) => {
                 // console.log('userd', myusers[0].connected);
                 // console.log('media', mymedia);
                 db.close();
-                res.render('chat',  { users: myusers.connected, media: mymedia , allusers: allusers});
+                res.render('chat', { users: myusers.connected, media: mymedia, allusers: allusers });
             });
         });
     });
     // res.render('chat');
 }
+
+exports.sendEmail = (req, res, messages) => {
+    var transporter = nodemailer.createTransport(mail.credentials);
+    var email = {
+        to: messages.to,
+        sbj: messages.subject,
+        msj: messages.text
+    };
+
+    transporter.sendMail(mail.options(email.to, email.sbj, email.msj), function (err, info) {
+        if (err) throw err;
+        console.log("msg email sent");
+    });
+}
+
+exports.newUserEmail = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.session.tempuser };
+        dbo.collection("users").find(query).toArray((err, result1) => {
+            exports.sendEmail(req, res, {
+                to: result1[0].email,
+                subject: "Complete Registration",
+                text: "Click on this <a href=http://localhost:3000/complete?username=" + req.session.tempuser + "&id=" + result1[0].complete+ ">link</a> to complete your registration" 
+            });
+        })
+    })
+}
+
+exports.resetPassword = (req, res) =>
+{
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.session.username };
+        dbo.collection("users").find(query).toArray((err, result1) => {
+            exports.sendEmail(req, res, {
+                to: result1[0].email,
+                subject: "Reset password",
+                text: "Click on this <a href=http://localhost:3000/reset?username=" + req.session.username + "&id=" + result1[0].complete+ ">link</a> to complete your reset your password" 
+            });
+        })
+    })
+} 

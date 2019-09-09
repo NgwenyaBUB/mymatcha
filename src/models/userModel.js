@@ -2,6 +2,8 @@ var MongoClient = require('mongodb').MongoClient;
 var passwordHash = require('password-hash');
 const coordinatesModel = require("../models/coordinatesModel");
 const mediaModel = require("../models/mediaModel");
+const notifModel = require("../models/notificationsModel");
+const msgModel = require("../models/messageModel");
 
 MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
     // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
@@ -38,7 +40,7 @@ exports.register = (req, res) => {
             blocklist: [],
             additional: {
                 // gender: "",
-                // sexualpreferance: "",
+                // sexualpreference: "",
                 // bio: "",
                 // tags: [],
                 // userlocation: "",
@@ -53,7 +55,7 @@ exports.register = (req, res) => {
         dbo.collection("users").find(query).toArray(function (err, result) {
             if (err) throw err;
             if (result.length == 0) {
-                dbo.collection("users").insertOne(myobj, function (err, res) {
+                dbo.collection("users").insertOne(myobj, function (err, result) {
                     if (err) { console.log("yeah reconnect bru"); throw err; }
                     console.log("1 document inserted");
                 });
@@ -62,7 +64,7 @@ exports.register = (req, res) => {
             }
             else {
                 console.log("username exists");
-                res.render('login');
+                res.render('login', { error: null });
             }
             db.close();
         });
@@ -95,31 +97,37 @@ exports.login = (req, res) => {
             if (err) throw err;
             if (result.length == 0) {
                 console.log("USERNAME IS DOESN'T EXIST");
+                res.render('login', { error: "USERNAME DOESN'T EXIST" });
             }
             else {
                 // console.log("username: ", result[0]["username"]);
                 // console.log("password: ", req.body.pass);
                 // var hashedPassword = passwordHash.generate(req.body.pass, {algorithm: 'whirlpool', saltLength: 8, iterations: 1});
-                if (passwordHash.verify(req.body.pass, result[0]["password"])) {
-                    if (!result[0]["additional"].sexualpreferance) {
+                if (passwordHash.verify(req.body.password, result[0]["password"])) {
+                    if (!result[0]["additional"].sexualpreference) {
                         req.session.tempuser = req.body.username;
                         res.render('completeprofile')
-                    } else {
-                        req.session.username = req.body.username;
-                        if (result[0].additional.sexualpreference == "both") {
-                            req.session.sexualpreference = "both";
+                    } else
+                        if (result[0]["complete"] > 0) {
+                            res.render('login', { error: "Check Email to log in!" });
+                        } else {
+                            req.session.username = req.body.username;
+                            if (result[0].additional.sexualpreference == "both") {
+                                req.session.sexualpreference = "both";
+                            }
+                            else if (result[0].additional.sexualpreference == "women") {
+                                req.session.sexualpreference = "female";
+                            }
+                            else if (result[0].additional.sexualpreference == "men") {
+                                req.session.sexualpreference
+                                    = "male";
+                            }
+                            coordinatesModel.getLocation(req, res);
+                            exports.changeStatus(req.session.username, "online");
+                            exports.homeMedia(req, res, req.body.username);
                         }
-                        else if (result[0].additional.sexualpreference == "women") {
-                            req.session.sexualpreference = "female";
-                        }
-                        else if (result[0].additional.sexualpreference == "men") {
-                            req.session.sexualpreference
-                                = "male";
-                        }
-                        coordinatesModel.getLocation(req, res);
-                        exports.changeStatus(req.session.username, "online");
-                        exports.homeMedia(req, res, req.body.username);
-                    }
+                } else {
+                    res.render('login', { error: "Wrong password!" });
                 }
             }
             db.close();
@@ -227,6 +235,7 @@ exports.user = (req, res) => {
                             liked = "Unlike";
                         }
                         exports.visituser(req);
+                        notifModel.addnotif(req, res, { type: "view", username: usr.username });
                         res.render('user', { user: usr, media: result1, likes: favourite, disabled: disabled, liked: liked });
                     });
                 }
@@ -262,6 +271,7 @@ exports.likepic = (req, resp) => {
         dbo.collection("media").updateOne(query, newvalues, function (err, res) {
             if (err) throw err;
             console.log(res.result.nModified + " document(s) updated");
+            notifModel.addnotif(req, res, { type: "like", username: req.query.username, id: req.query.id });
             // console.log(req.query.username, req.query.id, req.session.username, "yah")
             db.close();
             resp.sendStatus(200);
@@ -279,6 +289,7 @@ exports.unlikepic = (req, resp) => {
         dbo.collection("media").updateOne(query, newvalues, function (err, res) {
             if (err) throw err;
             console.log(res.result.nModified + " document(s) updated");
+            notifModel.addnotif(req, res, { type: "unlike", username: req.query.username, id: req.query.id });
             db.close();
             resp.sendStatus(200);
         });
@@ -630,6 +641,7 @@ exports.likeUser = (req, resp) => {
             console.log("Like user");
             console.log(res.result.nModified + " document(s) updated");
             exports.connect(req.query.username, req.session.username);
+            notifModel.addnotif(req, res, { type: "connect", username: query.username });
             db.close();
             resp.sendStatus(200);
         });
@@ -648,6 +660,7 @@ exports.unlikeUser = (req, resp) => {
             console.log("unlike user");
             console.log(res.result.nModified + " document(s) updated");
             exports.disconnect(req.query.username, req.session.username);
+            notifModel.addnotif(req, res, { type: "unconnect", username: query.username });
             db.close();
             resp.sendStatus(200);
         });
@@ -726,27 +739,78 @@ exports.complete = (req, res) => {
             $set: {
                 additional: {
                     gender: req.body.gender,
-                    sexualpreferance: req.body.sexual,
+                    sexualpreference: req.body.sexual,
                     bio: req.body.bio,
                     tags: req.body.tagsinput,
                     userlocation: req.body.location,
                     latitude: 0,
                     longitude: 0,
                     dob: req.body.birthdate
-                }
+                },
+                complete: Math.trunc(Math.random() * 100000000000000000)
             }
         };
         if (!req.session.tempuser) {
-            res.render('index');
+            res.render('index', { error: "You are not logged in" });
         }
         else {
-            dbo.collection("users").updateOne(query, newvalues, function (err, res) {
+            dbo.collection("users").updateOne(query, newvalues, function (err, resp) {
                 if (err) throw err;
                 mediaModel.saveImages(req, res, req.session.tempuser);
-                console.log(res.result.nModified + " document(s) updated");
+                console.log(resp.result.nModified + " document(s) updated");
             });
-            res.render('login');
+            msgModel.newUserEmail(req, res);
+            res.render('login', { error: "Check email to complete registration!" });
         }
     });
-}//"pizza,foodie,soccer,techie,downers,kanye"
-//"I am a shop owner and enjoy dancing in my spare time"
+}
+
+exports.validateRegistration = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.query.username };
+        dbo.collection("users").find(query).toArray((err, result1) => {
+            if (result1.length < 1) {
+                res.render('index', { error: "Something went wrong" });
+            }
+            else {
+                if (result1[0].complete != req.query.id) {
+                    res.render('index', { error: "Invalid Registration token. Check your email or contact info@matcha.com for help" });
+                }
+                else {
+                    let newvalues = {
+                        $set: {
+                            complete: -1
+                        }
+                    }
+                    dbo.collection("users").updateOne(query, newvalues, function (err, resp) {
+                        if (err) throw err;
+                        res.render('login', { error: 'Registration Successful' });
+                    });
+                }
+            }
+        })
+    })
+}
+
+exports.resetPassword = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var hashedPassword = passwordHash.generate(req.body.password, { algorithm: 'whirlpool', saltLength: 8, iterations: 1 });
+        var query = { username: req.body.username };
+        var newvalues = {
+            $set: {
+                password: hashedPassword
+            }
+        }
+        dbo.collection("users").updateOne(query, newvalues, function (err, resp) {
+            if (err) throw err;
+            res.sendStatus(200)
+        });
+    })
+}
+
