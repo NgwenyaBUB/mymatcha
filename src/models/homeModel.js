@@ -53,6 +53,32 @@ exports.getMyProfile = (req, res) => {
         });
     });
 }
+
+exports.checkReset = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true , useUnifiedTopology: true}, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.query.username};
+        dbo.collection("users").find(query).toArray(function (err, result) {
+            if (err) throw err;
+            if (result.length == 0) {
+                // console.log("USERNAME IS DOESN'T EXIST", result);
+                res.render('login', {error: "Invalid Username"});
+            }
+            else {
+                if (req.query.id != result[0].complete)
+                {
+                    res.render('login', {error: "Invalid Token"});
+                }
+                else {
+                    res.render('passwordreset', {error: null, username: req.query.username});
+                }
+            }
+            db.close();
+        });
+    });
+}
 // $(document).ready(function () {
 //     setTimeout(function () {
 //         var MongoClient = require('mongodb').MongoClient;

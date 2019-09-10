@@ -1,6 +1,7 @@
 
 var request = require('request');
 var async = require('async');
+var MongoClient = require('mongodb').MongoClient;
 
 function degreesToRadians(degrees) {
     return degrees * Math.PI / 180;
@@ -26,7 +27,7 @@ exports.getDistance = (pointA, pointB) => {
 }
 
 exports.getLocation = (req, res) => {
-  // var location = {city : "", latitude: "", longitude: ""};
+    // var location = {city : "", latitude: "", longitude: ""};
     // var url = 'http://api.ipstack.com/check?access_key=03cc3fd4e61ce21f0324f328b0a7e67c';
     var url = 'http://ip-api.com/json';
     request(url, function (error, response, body) {
@@ -39,7 +40,27 @@ exports.getLocation = (req, res) => {
             // location.longitude = obj.longitude;
             // console.log(location);
             // res.send(obj);
-            req.session.location = obj;
+            req.session.lat = obj.lat;
+            req.session.lon = obj.lon;
+            console.log('location', req.session.lat);
+            MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+                // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+                if (err) throw err;
+                var dbo = db.db("matcha");
+                var query = { username: req.session.tempuser };
+                var newvalues = {
+                    $set: {
+                        "additional.latitude": obj.lat,
+                        "additional.longitude": obj.lon,
+                    }
+                };
+                dbo.collection("users").updateOne(query, newvalues, function (err, res) {
+                    if (err) throw err;
+                    console.log("Like user");
+                    console.log(res.result.nModified + " document(s) updated");
+                    db.close();
+                });
+            });
         }
     })
 }

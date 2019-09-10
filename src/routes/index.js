@@ -20,6 +20,7 @@ exports.appRoute = router => {
   router.get("/logout", homeController.logout);
   router.get("/complete", homeController.complete);
   router.get("/resetpassemail", homeController.resetpassemail);
+  router.get("/reset", homeController.reset);
 
   /* =================== DEBUG*/
   router.get("/test", homeController.test);
@@ -39,8 +40,8 @@ exports.appRoute = router => {
   router.get("/sortbylocation", userController.sortbylocation);
   router.get("/sortbyrating", userController.sortbyrating);
   router.get("/visituser", userController.visit);
-  router.get("/resetPass", userController.resetPass);
-
+  
+  router.post("/resetPass", userController.resetPass);
   router.post('/logina', userController.getUserController);
   router.post('/registera', userController.getRegisterController);
   router.post("/sendMessage", msgController.sendMessage);

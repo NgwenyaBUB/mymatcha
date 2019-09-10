@@ -4,10 +4,12 @@ const coordinatesModel = require("../models/coordinatesModel");
 const mediaModel = require("../models/mediaModel");
 const notifModel = require("../models/notificationsModel");
 const msgModel = require("../models/messageModel");
+let fame = {};
+
 
 MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
     // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
-
+    exports._calculateFame();
     if (err) throw err;
     var dbo = db.db("matcha");
     dbo.listCollections({ name: "users" })
@@ -21,6 +23,29 @@ MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', 
             }
         });
 });
+
+exports._calculateFame = () => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, (err, db) => {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        dbo.collection("users").find().toArray((err, result) => {
+            if (err) throw err;
+            let highest = 0;
+            for (const iterator of result) {
+                fame[iterator.username] = iterator.viewed.length;
+                if (iterator.viewed.length > highest)
+                {
+                    highest = iterator.viewed.length;
+                }
+            }
+            for (const iterator of result) {
+                fame[iterator.username] = (fame[iterator.username] / highest) * 100;
+            }            
+        });
+        db.close();
+    });
+}
 
 exports.register = (req, res) => {
     MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
@@ -122,7 +147,6 @@ exports.login = (req, res) => {
                                 req.session.sexualpreference
                                     = "male";
                             }
-                            coordinatesModel.getLocation(req, res);
                             exports.changeStatus(req.session.username, "online");
                             exports.homeMedia(req, res, req.body.username);
                         }
@@ -208,11 +232,11 @@ exports.user = (req, res) => {
             if (err) throw err;
             // console.log(result);
             if (result.length == 0) {
-                res.render('user', { user: null });
+                res.render('user', { user: null , fame: fame});
             }
             else {
                 if (req.query.username === req.session.username) {
-                    res.render('profile', { me: result[0] });
+                    res.render('profile', { me: result[0] , fame: fame});
                 }
                 else {
                     var usr = result[0];
@@ -236,7 +260,7 @@ exports.user = (req, res) => {
                         }
                         exports.visituser(req);
                         notifModel.addnotif(req, res, { type: "view", username: usr.username });
-                        res.render('user', { user: usr, media: result1, likes: favourite, disabled: disabled, liked: liked });
+                        res.render('user', { user: usr, media: result1, likes: favourite, disabled: disabled, liked: liked, fame: fame });
                     });
                 }
             }
@@ -246,15 +270,16 @@ exports.user = (req, res) => {
 }
 
 exports.visituser = (req, res) => {
+    exports._calculateFame();
     MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
         var query = { username: req.query.username };
         var newvalues = { $addToSet: { viewed: req.session.username } };
-        dbo.collection("media").updateOne(query, newvalues, function (err, res) {
+        dbo.collection("users").updateOne(query, newvalues, function (err, res) {
             if (err) throw err;
-            console.log(res.result.nModified + " document(s) updated");
+            console.log(res.result.nModified + " document(s) updated View added ", req.query.username);
             // console.log(req.query.username, req.query.id, req.session.username, "yah")
             db.close();
         });
@@ -297,6 +322,7 @@ exports.unlikepic = (req, resp) => {
 }
 
 exports.getListUsers = (req, res) => {
+    exports._calculateFame();
     MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, function (err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
@@ -332,7 +358,7 @@ exports.getListUsers = (req, res) => {
                         mymedia[iterator.username] = iterator;
                     }
                     // console.log("wat ", mymedia);
-                    res.render('findlist', { users: users, media: mymedia });
+                    res.render('findlist', { users: users, media: mymedia , fame: fame});
                 });
             }
             db.close();
@@ -360,7 +386,7 @@ exports.findUsers = (req, res) => {
                 if (err) throw err;
                 if (result.length == 0) {
                     console.log("USERNAME IS DOESN'T EXIST");
-                    res.render('findlist', { users: [], media: {} });
+                    res.render('findlist', { users: [], media: {} , fame: fame});
                 }
                 else {
                     console.log(req.body);
@@ -376,7 +402,7 @@ exports.findUsers = (req, res) => {
                             mymedia[iterator.username] = iterator;
                         }
 
-                        res.render('findlist', { users: users, media: mymedia });
+                        res.render('findlist', { users: users, media: mymedia , fame: fame});
                     });
                 }
                 db.close();
@@ -408,7 +434,7 @@ exports.findByTag = (req, res) => {
                     mymedia[iterator.username] = iterator;
                 }
 
-                res.render('findlist', { users: users, media: mymedia });
+                res.render('findlist', { users: users, media: mymedia , fame: fame});
             });
         });
     });
@@ -434,7 +460,7 @@ exports.findByLocation = (req, res) => {
                     mymedia[iterator.username] = iterator;
                 }
 
-                res.render('findlist', { users: users, media: mymedia });
+                res.render('findlist', { users: users, media: mymedia , fame: fame});
             });
         });
     });
@@ -466,7 +492,7 @@ exports.findByAge = (req, res) => {
                     mymedia[iterator.username] = iterator;
                 }
 
-                res.render('findlist', { users: outusers, media: mymedia });
+                res.render('findlist', { users: outusers, media: mymedia , fame: fame});
             });
         });
     });
@@ -505,7 +531,7 @@ exports.sortByAge = (req, res) => {
                     mymedia[iterator.username] = iterator;
                 }
 
-                res.render('findlist', { users: outusers, media: mymedia });
+                res.render('findlist', { users: outusers, media: mymedia , fame: fame});
             });
         });
     });
@@ -544,7 +570,7 @@ exports.sortByTags = (req, res) => {
                     mymedia[iterator.username] = iterator;
                 }
 
-                res.render('findlist', { users: outusers, media: mymedia });
+                res.render('findlist', { users: outusers, media: mymedia , fame: fame});
             });
         });
     });
@@ -584,7 +610,7 @@ exports.sortByRating = (req, res) => {
                     mymedia[iterator.username] = iterator;
                 }
 
-                res.render('findlist', { users: outusers, media: mymedia });
+                res.render('findlist', { users: outusers, media: mymedia , fame: fame});
             });
         });
     });
@@ -623,7 +649,7 @@ exports.sortByLocation = (req, res) => {
                     mymedia[iterator.username] = iterator;
                 }
 
-                res.render('findlist', { users: outusers, media: mymedia });
+                res.render('findlist', { users: outusers, media: mymedia , fame: fame});
             });
         });
     });
@@ -741,7 +767,7 @@ exports.complete = (req, res) => {
                     gender: req.body.gender,
                     sexualpreference: req.body.sexual,
                     bio: req.body.bio,
-                    tags: req.body.tagsinput,
+                    tags: req.body.tagsinput.split(","),
                     userlocation: req.body.location,
                     latitude: 0,
                     longitude: 0,
@@ -760,6 +786,7 @@ exports.complete = (req, res) => {
                 console.log(resp.result.nModified + " document(s) updated");
             });
             msgModel.newUserEmail(req, res);
+            coordinatesModel.getLocation(req, res);
             res.render('login', { error: "Check email to complete registration!" });
         }
     });
@@ -796,21 +823,28 @@ exports.validateRegistration = (req, res) => {
 }
 
 exports.resetPassword = (req, res) => {
+    console.log("restthe p;ass");
     MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
-        var hashedPassword = passwordHash.generate(req.body.password, { algorithm: 'whirlpool', saltLength: 8, iterations: 1 });
-        var query = { username: req.body.username };
-        var newvalues = {
-            $set: {
-                password: hashedPassword
-            }
+        if (req.body.confirmpassword != req.body.pass) {
+            res.render('index', { error: "Passwords didnt match! Reset failed" });
         }
-        dbo.collection("users").updateOne(query, newvalues, function (err, resp) {
-            if (err) throw err;
-            res.sendStatus(200)
-        });
+        else {
+            var hashedPassword = passwordHash.generate(req.body.pass, { algorithm: 'whirlpool', saltLength: 8, iterations: 1 });
+            var query = { username: req.body.username };
+            var newvalues = {
+                $set: {
+                    password: hashedPassword,
+                    complete: -1
+                }
+            }
+            dbo.collection("users").updateOne(query, newvalues, function (err, resp) {
+                if (err) throw err;
+                res.render('index', { error: "Reset Successful" });
+            });
+        }
     })
 }
 

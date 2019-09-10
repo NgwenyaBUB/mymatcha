@@ -44,8 +44,8 @@ exports.addnotif = (req, res, query) => {
         var dbo = db.db("matcha");
         let type = {
             like: "liked your picture with id " + query.id,
-            unlike: "liked your picture with id " + query.id,
-            view: "view your profile",
+            unlike: "unliked your picture with id " + query.id,
+            view: "viewed your profile",
             connect: "requested to connect with you",
             unconnect: "withdrew their requested to connect with you"
         }
