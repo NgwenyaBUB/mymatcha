@@ -1,6 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 const nodemailer = require('nodemailer');
 var mail = require("../config/nodemailer.js");
+const userModel = require("../models/userModel");
 
 exports.getAllMessages = (req, res) => {
     MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
@@ -128,24 +129,37 @@ exports.newUserEmail = (req, res) => {
             exports.sendEmail(req, res, {
                 to: result1[0].email,
                 subject: "Complete Registration",
-                text: "Click on this <a href=http://localhost:3000/complete?username=" + req.session.tempuser + "&id=" + result1[0].complete+ ">link</a> to complete your registration" 
+                text: "Click on this <a href=http://localhost:3000/complete?username=" + req.session.tempuser + "&id=" + result1[0].complete + ">link</a> to complete your registration"
             });
         })
     })
 }
 
-exports.resetPassword = (req, res) =>
-{
+exports.resetPassword = (req, res) => {
     MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
         // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
         var query = { username: req.session.username };
+        let num = Math.trunc(Math.random() * 100000000000000000);
         dbo.collection("users").find(query).toArray((err, result1) => {
             exports.sendEmail(req, res, {
                 to: result1[0].email,
                 subject: "Reset password",
-                text: "Click on this <a href=http://localhost:3000/reset?username=" + req.session.username + "&id=" + result1[0].complete+ ">link</a> to complete your reset your password" 
+                text: "Click on this <a href=http://localhost:3000/reset?username=" + req.session.username + "&id=" + num + ">link</a> to complete your reset your password"
+            });
+
+            var newvalues = {
+                $set: {
+                    complete: num
+                }
+            }
+            dbo.collection("users").updateOne(query, newvalues, function (err, resp) {
+                if (err) throw err;
+                console.log(resp.result.nModified + " document(s) updated");
+                userModel.changeStatus(req.session.username, "offline");
+                req.session.username = "";
+                res.render('index', { error: "go to email to reset password" });
             });
         })
     })

@@ -124,7 +124,7 @@
 					<p>Interested in: <%=user.additional.sexualpreference %></p>
 					<p>Bio: <%=user.additional.bio %></p>
 					<p>Status: <%=user.status %></p>
-					<p>Fame rating: </p>
+					<p>Fame rating: <%=fame[user.username]%>%</p>
 				</div>
 				<a class="waves-effect waves-light btn" id="thumbs_up" onclick="likeuser()"><%=liked %></a>
 				<a class="waves-effect waves-light btn <%=disabled %>" href="/chat"><i

@@ -29,7 +29,7 @@
 				<a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
 				<ul id="dropdown1" class="dropdown-content">
 					<li><a href="/profile">Profile</a></li>
-					<li><a href="#!" onclick="resetPass()">Reset Password</a></li>
+					<li><a href="/resetpassemail">Reset Password</a></li>
 					<li class="divider"></li>
 					<li><a href="/logout">Logout</a></li>
 				</ul>
@@ -165,15 +165,15 @@
 				}
 			});
 		}
-		function resetPass() {
-			$.ajax({
-				type: 'GET',
-				url: '/resetpassemail',
-				success: function (data) {
-					Materialize.toast('Check email for password reset link!', 4000)
-				}
-			});
-		}
+		// function resetPass() {
+		// 	$.ajax({
+		// 		type: 'GET',
+		// 		url: '/resetpassemail',
+		// 		success: function (data) {
+		// 			Materialize.toast('Check email for password reset link!', 4000)
+		// 		}
+		// 	});
+		// }
 	</script>
 	<div class="footer">
 		<div class="footer-copyright">

@@ -104,10 +104,15 @@ exports.getHomePage = (req, res, next) => {
 
   exports.test = (req, res, next) => 
   {
-    req.session.tempuser = "umasiza123";
-    msgModel.newUserEmail(req, res);
+    // req.session.tempuser = "umasiza123";
+    coordinatesModel.getLocation(req, res);
+    // msgModel.newUserEmail(req, res);
   }
 
   exports.resetpassemail = (req, res, next) => {
     msgModel.resetPassword(req, res);
+  }
+
+  exports.reset = (req, res, next) => {
+    homeModel.checkReset(req, res);
   }

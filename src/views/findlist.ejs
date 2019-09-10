@@ -149,7 +149,7 @@
 				</ul>
 			</div>
 		</div>
-		<div class="row">
+		<div class="row" style="max-height:60vh; overflow-y: auto">
 			<div class="col s6 offset-s3">
 				<ul class="collection">
 					<% for(var i=0; i < users.length; i++) { %>
@@ -160,7 +160,7 @@
 							gender: <%=users[i].additional.gender %> &nbsp; age: <%= (new Date(Date.now() - new Date(users[i].additional.dob).getTime()).getUTCFullYear() - 1970) %>
 						</p>
 						<p>Location: <%=users[i].additional.userlocation%></p>
-						<p>Fame Rating: </p>
+						<p>Fame Rating: <%=fame[users[i].username]%>%</p>
 						<p>Tags: <%=users[i].additional.tags%></p>
 						<a href="/user?username=<%=users[i].username %>" class="secondary-content"><i
 								class="material-icons black-text">whatshot</i></a>
@@ -180,7 +180,6 @@
 	</div>
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"
 		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-	<script src="/js/materialize.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
 	<script>
