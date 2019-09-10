@@ -113,9 +113,9 @@
 				<div class="row">
 					<div class="input-field">
 						<select name="gender">
-							<option value="" disabled selected>Choose your Gender</option>
-							<option value="male">Male</option>
-							<option value="female">Female</option>
+							<option value="" disabled>Choose your Gender</option>
+							<option value="male" selected="<%= me.additional.gender == 'male'%>">Male</option>
+							<option value="female" selected="<%= me.additional.gender == 'female'%>">Female</option>
 						</select>
 						<label>Gender</label>
 					</div>
@@ -124,10 +124,10 @@
 				<div class="row">
 					<div class="input-field col s12">
 						<select name="sexual">
-							<option value="" disabled selected>What is your sexual preference</option>
-							<option value="men">Men</option>
-							<option value="women">Women</option>
-							<option value="both">Both</option>
+							<option value="" disabled>What is your sexual preference</option>
+							<option value="men" selected="<%= me.additional.sexualpreference == 'men' %>"></option>>Men</option>
+							<option value="women" selected="<%= me.additional.sexualpreference == 'women' %>">Women</option>
+							<option value="both" selected="<%= me.additional.sexualpreference == 'both' %>">Both</option>
 						</select>
 						<label>Sexual Preference</label>
 					</div>
@@ -141,8 +141,8 @@
 				<div class="row">
 					<div class="input-field col s12">
 						<i class="material-icons prefix">location_on</i>
-						<input type="text" id="autocomplete-input" name="location" class="autocomplete">
-						<label for="autocomplete-input">Location</label>
+						<input type="text" id="autocomplete-input" name="location" class="autocomplete" value="<%=me.additional.location%>">
+						<!-- <label for="autocomplete-input">Location</label> -->
 					</div>
 				</div>
 				<div class="row">
