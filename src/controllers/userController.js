@@ -94,3 +94,11 @@ exports.visit = (req, res, next) => {
 exports.resetPass = (req, res, next) => {
   userModel.resetPassword(req, res);
 }
+
+exports.updateProfile = (req, res, next) => {
+  userModel.updateUser(req, res);
+}
+
+exports.updateAdditional = (req, res, next) => {
+  userModel.updateadditional(req, res);
+}

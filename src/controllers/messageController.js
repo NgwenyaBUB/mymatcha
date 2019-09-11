@@ -11,6 +11,10 @@ exports.getMessages = (req, res, next) => {
   exports.sendMessage = (req, res, next) => {
     msgModel.sendMessage(req, res);
   };
+  
+  exports.readMessages = (req, res, next) => {
+    msgModel.readMessage(req, res);
+  };
 
   exports.getChat = (req, res, next) => {
     if (!req.session.username)

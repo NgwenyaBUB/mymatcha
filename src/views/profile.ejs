@@ -29,14 +29,14 @@
 		}
 
 		.footer {
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            color: black;
-            text-align: center;
-            background-color: white;
-        }
+			position: fixed;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+			color: black;
+			text-align: center;
+			background-color: white;
+		}
 	</style>
 	<title>Profile</title>
 </head>
@@ -74,84 +74,96 @@
 		</nav>
 		<div class="row">
 			<div class="col s4 black" style="min-height: 100vh;">
-				<form>
+				<form action="/updateprofile" method="POST">
 					<h1 style="text-align: center; color: white;"><%=me.name%> <%=me.surname%></h1>
 					<div class="row">
 						<div class="input-field col s12 white-text">
-							<input placeholder="" id="first_name" type="text" class="validate" value="<%=me.name%>">
+							<input placeholder="" id="first_name" type="text" name="fname" class="validate" value="<%=me.name%>">
 							<label for="first_name">First Name</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s12 white-text">
-							<input placeholder="" id="last_name" type="text" class="validate" value="<%=me.surname%>">
+							<input placeholder="" id="last_name" type="text" name="lname" class="validate" value="<%=me.surname%>">
 							<label for="last_name">Last Name</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s12 white-text">
-							<input placeholder="" id="email" type="email" class="validate" value="<%=me.email%>">
+							<input placeholder="" id="email" type="email" name="email" class="validate" value="<%=me.email%>">
 							<label for="email">Email</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s12 white-text">
-							<input placeholder="" id="username" type="text" class="validate" value="<%=me.username%>">
+							<input placeholder="" id="username" type="text" name="username" class="validate" value="<%=me.username%>">
 							<label for="username">Username</label>
 						</div>
 					</div>
 					<div class="row white-text">
 						<div class="chips chips-initial"></div>
 					</div>
+					<button class="btn waves-effect waves-light" type="submit" name="action">Update
+						<i class="material-icons right">send</i>
+					</button>
 				</form>
 			</div>
 			<div class="col s8">
 				<div class="row ">
 					<h1 class="center-align">Profile</h1>
 				</div>
+				<form action="/updateadditional" method="POST">
+					<div class="row">
+						<div class="input-field">
+							<select name="gender">
+								<option value="" disabled>Choose your Gender</option>
+								<option value="male" selected="<%= me.additional.gender == 'male'%>">Male</option>
+								<option value="female" selected="<%= me.additional.gender == 'female'%>">Female</option>
+							</select>
+							<label>Gender</label>
+						</div>
+					</div>
 
-				<div class="row">
-					<div class="input-field">
-						<select name="gender">
-							<option value="" disabled>Choose your Gender</option>
-							<option value="male" selected="<%= me.additional.gender == 'male'%>">Male</option>
-							<option value="female" selected="<%= me.additional.gender == 'female'%>">Female</option>
-						</select>
-						<label>Gender</label>
+					<div class="row">
+						<div class="input-field col s12">
+							<select name="sexual">
+								<option value="" disabled>What is your sexual preference</option>
+								<option value="men" selected="<%= me.additional.sexualpreference == 'men' %>"></option>
+								>Men
+								</option>
+								<option value="women" selected="<%= me.additional.sexualpreference == 'women' %>">Women
+								</option>
+								<option value="both" selected="<%= me.additional.sexualpreference == 'both' %>">Both
+								</option>
+							</select>
+							<label>Sexual Preference</label>
+						</div>
 					</div>
-				</div>
-
-				<div class="row">
-					<div class="input-field col s12">
-						<select name="sexual">
-							<option value="" disabled>What is your sexual preference</option>
-							<option value="men" selected="<%= me.additional.sexualpreference == 'men' %>"></option>>Men</option>
-							<option value="women" selected="<%= me.additional.sexualpreference == 'women' %>">Women</option>
-							<option value="both" selected="<%= me.additional.sexualpreference == 'both' %>">Both</option>
-						</select>
-						<label>Sexual Preference</label>
+					<div class="row">
+						<div class="input-field col s12">
+							<textarea id="bio1" name="bio" class="materialize-textarea"></textarea>
+							<label>Say something about yourself:</label>
+						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="input-field col s12">
-						<textarea id="bio1" name="bio" class="materialize-textarea"></textarea>
-						<label>Say something about yourself:</label>
+					<div class="row">
+						<div class="input-field col s12">
+							<i class="material-icons prefix">location_on</i>
+							<input type="text" id="autocomplete-input" name="location" class="autocomplete"
+								value="<%=me.additional.userlocation%>">
+							<!-- <label for="autocomplete-input">Location</label> -->
+						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="input-field col s12">
-						<i class="material-icons prefix">location_on</i>
-						<input type="text" id="autocomplete-input" name="location" class="autocomplete" value="<%=me.additional.location%>">
-						<!-- <label for="autocomplete-input">Location</label> -->
-					</div>
-				</div>
-				<div class="row">
-					<p> Viewed by :
-						<% for (const iterator of me.viewed) {%>
+					<div class="row">
+						<p> Viewed by :
+							<% for (const iterator of me.viewed) {%>
 							<%= iterator%> &nbsp;|
-						<% } %>
-					</p>
-				</div>
+							<% } %>
+						</p>
+					</div>
+					<button class="btn waves-effect waves-light" type="submit" name="action">Update
+						<i class="material-icons right">send</i>
+					</button>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -169,10 +181,11 @@
 	<script>
 		var tags = [];
 		"<% for(var i=0; i < me.additional.tags.length; i++) { %>"
-				tags.push({
-					tag: "<%=me.additional.tags[i]%>"
-				});
-				"<% } %>"
+		tags.push({
+			tag: "<%=me.additional.tags[i]%>"
+		});
+		"<% } %>"
+		$("#bio1").val("<%=me.additional.bio%>");
 		$('.chips').material_chip();
 		$('.chips-initial').material_chip({
 			data: tags,
@@ -181,12 +194,12 @@
 		$(".button-collapse").sideNav();
 	</script>
 	<div class="footer">
-			<div class="footer-copyright">
-				<div class="container">
-					© 2019 by bngweny
-				</div>
+		<div class="footer-copyright">
+			<div class="container">
+				© 2019 by bngweny
 			</div>
 		</div>
+	</div>
 </body>
 
 </html>
