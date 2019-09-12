@@ -151,6 +151,11 @@
                     url: '/getMessages?username=' + user,
                     success: (data) => {
                         let count = data.length;
+                        $.ajax({
+                            type: 'GET',
+                            url: '/readMessages?username=' + user,
+                            success: () => { console.log('read') }
+                        });
                         if (count > numMsgs) {
                             for (let index = numMsgs; index < count; index++) {
                                 let color = "light-blue darken-1 ";

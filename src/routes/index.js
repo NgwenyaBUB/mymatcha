@@ -28,6 +28,7 @@ exports.appRoute = router => {
 
   router.get("/chat", msgController.getChat);
   router.get("/getMessages", msgController.getMessages);
+  router.get("/readMessages", msgController.readMessages);
   router.get("/getMessageCount", msgController.getMessageCount);
 
   router.get("/getUsersWithin10kms", userController.getUsersWithin10kms);
@@ -47,4 +48,6 @@ exports.appRoute = router => {
   router.post("/sendMessage", msgController.sendMessage);
   router.post("/search", userController.findUsers);
   router.post("/completea", userController.complete);
+  router.post("/updateprofile", userController.updateProfile);
+  router.post("/updateadditional", userController.updateAdditional);
 };

@@ -4,6 +4,7 @@ const coordinatesModel = require("../models/coordinatesModel");
 const mediaModel = require("../models/mediaModel");
 const notifModel = require("../models/notificationsModel");
 const msgModel = require("../models/messageModel");
+const homeModel = require("../models/homeModel");
 let fame = {};
 
 
@@ -34,14 +35,13 @@ exports._calculateFame = () => {
             let highest = 0;
             for (const iterator of result) {
                 fame[iterator.username] = iterator.viewed.length;
-                if (iterator.viewed.length > highest)
-                {
+                if (iterator.viewed.length > highest) {
                     highest = iterator.viewed.length;
                 }
             }
             for (const iterator of result) {
                 fame[iterator.username] = (fame[iterator.username] / highest) * 100;
-            }            
+            }
         });
         db.close();
     });
@@ -232,11 +232,11 @@ exports.user = (req, res) => {
             if (err) throw err;
             // console.log(result);
             if (result.length == 0) {
-                res.render('user', { user: null , fame: fame});
+                res.render('user', { user: null, fame: fame });
             }
             else {
                 if (req.query.username === req.session.username) {
-                    res.render('profile', { me: result[0] , fame: fame});
+                    res.render('profile', { me: result[0], fame: fame });
                 }
                 else {
                     var usr = result[0];
@@ -321,6 +321,39 @@ exports.unlikepic = (req, resp) => {
     });
 }
 
+exports.unblockuser = (req, resp) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.session.username};
+        var newvalues = { $pull: { blocklist: req.query.username } };
+        dbo.collection("users").updateOne(query, newvalues, function (err, res) {
+            if (err) throw err;
+            console.log(res.result.nModified + " document(s) updated");
+            db.close();
+            resp.sendStatus(200);
+        });
+    });
+}
+
+exports.blockuser = (req, resp) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.session.username };
+        var newvalues = { $addToSet: { blocklist: req.query.username } };
+        dbo.collection("users").updateOne(query, newvalues, function (err, res) {
+            if (err) throw err;
+            console.log(res.result.nModified + " document(s) updated");
+            unlikeUser(req, resp);
+            db.close();
+            resp.sendStatus(200);
+        });
+    });
+}
+
 exports.getListUsers = (req, res) => {
     exports._calculateFame();
     MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true }, function (err, db) {
@@ -358,7 +391,7 @@ exports.getListUsers = (req, res) => {
                         mymedia[iterator.username] = iterator;
                     }
                     // console.log("wat ", mymedia);
-                    res.render('findlist', { users: users, media: mymedia , fame: fame});
+                    res.render('findlist', { users: users, media: mymedia, fame: fame });
                 });
             }
             db.close();
@@ -386,7 +419,7 @@ exports.findUsers = (req, res) => {
                 if (err) throw err;
                 if (result.length == 0) {
                     console.log("USERNAME IS DOESN'T EXIST");
-                    res.render('findlist', { users: [], media: {} , fame: fame});
+                    res.render('findlist', { users: [], media: {}, fame: fame });
                 }
                 else {
                     console.log(req.body);
@@ -402,7 +435,7 @@ exports.findUsers = (req, res) => {
                             mymedia[iterator.username] = iterator;
                         }
 
-                        res.render('findlist', { users: users, media: mymedia , fame: fame});
+                        res.render('findlist', { users: users, media: mymedia, fame: fame });
                     });
                 }
                 db.close();
@@ -434,7 +467,7 @@ exports.findByTag = (req, res) => {
                     mymedia[iterator.username] = iterator;
                 }
 
-                res.render('findlist', { users: users, media: mymedia , fame: fame});
+                res.render('findlist', { users: users, media: mymedia, fame: fame });
             });
         });
     });
@@ -460,7 +493,7 @@ exports.findByLocation = (req, res) => {
                     mymedia[iterator.username] = iterator;
                 }
 
-                res.render('findlist', { users: users, media: mymedia , fame: fame});
+                res.render('findlist', { users: users, media: mymedia, fame: fame });
             });
         });
     });
@@ -492,7 +525,7 @@ exports.findByAge = (req, res) => {
                     mymedia[iterator.username] = iterator;
                 }
 
-                res.render('findlist', { users: outusers, media: mymedia , fame: fame});
+                res.render('findlist', { users: outusers, media: mymedia, fame: fame });
             });
         });
     });
@@ -531,7 +564,7 @@ exports.sortByAge = (req, res) => {
                     mymedia[iterator.username] = iterator;
                 }
 
-                res.render('findlist', { users: outusers, media: mymedia , fame: fame});
+                res.render('findlist', { users: outusers, media: mymedia, fame: fame });
             });
         });
     });
@@ -570,7 +603,7 @@ exports.sortByTags = (req, res) => {
                     mymedia[iterator.username] = iterator;
                 }
 
-                res.render('findlist', { users: outusers, media: mymedia , fame: fame});
+                res.render('findlist', { users: outusers, media: mymedia, fame: fame });
             });
         });
     });
@@ -610,7 +643,7 @@ exports.sortByRating = (req, res) => {
                     mymedia[iterator.username] = iterator;
                 }
 
-                res.render('findlist', { users: outusers, media: mymedia , fame: fame});
+                res.render('findlist', { users: outusers, media: mymedia, fame: fame });
             });
         });
     });
@@ -649,7 +682,7 @@ exports.sortByLocation = (req, res) => {
                     mymedia[iterator.username] = iterator;
                 }
 
-                res.render('findlist', { users: outusers, media: mymedia , fame: fame});
+                res.render('findlist', { users: outusers, media: mymedia, fame: fame });
             });
         });
     });
@@ -756,40 +789,89 @@ exports.disconnect = (username1, username2) => {
 
 //app.post('/completea', function (req, res) {
 exports.complete = (req, res) => {
+    if (!req.body.gender || !req.body.sexual || !req.body.bio || !req.body.location || !req.body.birthdate) {
+        res.render('index', { error: "OOPS Something went wrong. Please try that again." });
+    }
+    else {
+        MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+            // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+            if (err) throw err;
+            var dbo = db.db("matcha");
+            var query = { username: req.session.tempuser };
+            var newvalues = {
+                $set: {
+                    additional: {
+                        gender: req.body.gender,
+                        sexualpreference: req.body.sexual,
+                        bio: req.body.bio,
+                        tags: req.body.tagsinput.split(","),
+                        userlocation: req.body.location,
+                        latitude: req.body.latitude,
+                        longitude: req.body.longitude,
+                        dob: req.body.birthdate
+                    },
+                    complete: Math.trunc(Math.random() * 100000000000000000)
+                }
+            };
+            if (!req.session.tempuser) {
+                res.render('index', { error: "You are not logged in" });
+            }
+            else {
+                dbo.collection("users").updateOne(query, newvalues, function (err, resp) {
+                    if (err) throw err;
+                    mediaModel.saveImages(req, res, req.session.tempuser);
+                    console.log(resp.result.nModified + " document(s) updated");
+                });
+                msgModel.newUserEmail(req, res);
+                if (!req.body.latitude || !req.body.longitude) {
+                    coordinatesModel.getLocation(req, res);
+                }
+                res.render('login', { error: "Check email to complete registration!" });
+            }
+        });
+    }
+}
+
+exports.updateadditional = (req, res) => {
     MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
-        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("matcha");
-        var query = { username: req.session.tempuser };
+        var query = { username: req.session.username };
         var newvalues = {
             $set: {
-                additional: {
-                    gender: req.body.gender,
-                    sexualpreference: req.body.sexual,
-                    bio: req.body.bio,
-                    tags: req.body.tagsinput.split(","),
-                    userlocation: req.body.location,
-                    latitude: 0,
-                    longitude: 0,
-                    dob: req.body.birthdate
-                },
-                complete: Math.trunc(Math.random() * 100000000000000000)
+                    "additional.gender": req.body.gender,
+                    'additional.sexualpreference': req.body.sexual,
+                    'additional.bio': req.body.bio,
+                    'additional.userlocation': req.body.location
             }
-        };
-        if (!req.session.tempuser) {
-            res.render('index', { error: "You are not logged in" });
         }
-        else {
-            dbo.collection("users").updateOne(query, newvalues, function (err, resp) {
-                if (err) throw err;
-                mediaModel.saveImages(req, res, req.session.tempuser);
-                console.log(resp.result.nModified + " document(s) updated");
-            });
-            msgModel.newUserEmail(req, res);
-            coordinatesModel.getLocation(req, res);
-            res.render('login', { error: "Check email to complete registration!" });
+        dbo.collection("users").updateOne(query, newvalues, function (err, resp) {
+            if (err) throw err;
+            console.log(resp.result.nModified + " document(s) updated");
+            homeModel.getMyProfile(req, res);
+        });
+    })
+}
+
+exports.updateUser = (req, res) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { username: req.session.username };
+        var newvalues = {
+            $set: {
+                name: req.body.fname,
+                surname: req.body.lname,
+                email: req.body.email,
+                username: req.body.username,
+            }
         }
-    });
+        dbo.collection("users").updateOne(query, newvalues, function (err, resp) {
+            if (err) throw err;
+            console.log(resp.result.nModified + " document(s) updated");
+            homeModel.getMyProfile(req, res);
+        });
+    })
 }
 
 exports.validateRegistration = (req, res) => {
@@ -847,4 +929,18 @@ exports.resetPassword = (req, res) => {
         }
     })
 }
+/*
+"gender": "female",
+        "sexualpreference": "both",
+        "bio": "Everyday is FRiday. Party all day etcetera",
+        "tags": [
+            "doctor",
+            "proffessional",
+            "modern art"
+        ],
+        "userlocation": "Cape Town",
+        "latitude": -33.937949, 
+        "longitude": 18.406265,
+        "dob": "1 November, 1997"
+*/
 

@@ -62,11 +62,26 @@ exports.sendMessage = (req, resp) => {
             timestamp: Math.floor(Date.now() / 1000)
         };
         dbo.collection("messages").insertOne(myobj, function (err, res) {
-            if (err) { console.log("yeah reconnect bru"); throw err; }
+            if (err) { console.log("yeah msg sent bru"); throw err; }
             console.log("1 document inserted");
             resp.sendStatus(200);
         });
         db.close();
+    });
+}
+
+exports.readMessage = (req, resp) => {
+    MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+        // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("matcha");
+        var query = { to: req.session.username, from: req.query.username };
+        var newvalues = { $set: { read: "true" } };
+        dbo.collection("messages").updateMany(query, newvalues, function (err, res) {
+            if (err) { console.log(" bru"); throw err; }
+            console.log(res.result.nModified + " document(s) updated");
+            resp.sendStatus(200);
+        })
     });
 }
 
