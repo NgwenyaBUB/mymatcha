@@ -57,7 +57,7 @@ exports.getLocation = (req, res) => {
                 dbo.collection("users").updateOne(query, newvalues, function (err, res) {
                     if (err) throw err;
                     console.log("Like user");
-                    console.log(res.result.nModified + " document(s) updated");
+                    console.log(res.result.nModified + " lcaotion(s) updated");
                     db.close();
                 });
             });

@@ -1,10 +1,10 @@
-mealsController = require("../controllers/mealsController");
+mediaController = require("../controllers/mediaController");
 userController = require("../controllers/userController");
 homeController = require("../controllers/homeController");
 msgController = require("../controllers/messageController");
 
 exports.appRoute = router => {
-  router.get("/menu", mealsController.getMenuController);
+  // router.get("/menu", mealsController.getMenuController);
 
   router.get("/loginpage", homeController.getLoginPage);
   router.get("/home", homeController.getHomePage);
@@ -41,7 +41,11 @@ exports.appRoute = router => {
   router.get("/sortbylocation", userController.sortbylocation);
   router.get("/sortbyrating", userController.sortbyrating);
   router.get("/visituser", userController.visit);
-  
+  router.get("/blockuser", userController.block);
+  router.get("/unblockuser", userController.unblock);
+  router.get("/getPicture", mediaController.getPicture);
+
+
   router.post("/resetPass", userController.resetPass);
   router.post('/logina', userController.getUserController);
   router.post('/registera', userController.getRegisterController);

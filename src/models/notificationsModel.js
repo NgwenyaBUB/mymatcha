@@ -60,7 +60,7 @@ exports.addnotif = (req, res, query) => {
 
         dbo.collection("notifications").insertOne(myobj, function (err, res) {
             if (err) { console.log("yeah reconnect bru"); throw err; }
-            console.log("1 document inserted");
+            console.log("1 notification inserted");
         });
     });
 }

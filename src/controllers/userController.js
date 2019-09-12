@@ -102,3 +102,11 @@ exports.updateProfile = (req, res, next) => {
 exports.updateAdditional = (req, res, next) => {
   userModel.updateadditional(req, res);
 }
+
+exports.block = (req, res, next) => {
+  userModel.blockuser(req, res);
+}
+
+exports.unblock = (req, res, next) => {
+  userModel.unblockuser(req ,res);
+}
