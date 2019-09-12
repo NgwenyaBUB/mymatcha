@@ -1,13 +1,9 @@
-var MongoClient = require('mongodb').MongoClient;
-//Move all picture related stuffs to here
+var db = require("../databaseModel");
 
 exports.saveImages = (req, res, username) => {
     var imgs = req.body.picture.split("|");
     if (imgs.length > 0) {
-        MongoClient.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
-            // MongoClient.connect('mongodb://localhost:27017/matcha', { useNewUrlParser: true }, function (err, db) {
-            if (err) throw err;
-            var dbo = db.db("matcha");
+            var dbo = db.get().db("matcha")
             for (let i = 0; i < imgs.length; i++) {
                 if (imgs[i]) {
                     var myobj = {
@@ -18,12 +14,26 @@ exports.saveImages = (req, res, username) => {
                         "likes": [],
                         "viewed": []
                     }
-                    dbo.collection("media").insertOne(myobj, function (err, res) {
+                    dbo.collection("media").insertMany(myobj, function (err, res) {
                         if (err) throw err;
                         console.log("added it");
                     })
                 }
             }
-        });
     }
+}
+
+exports.getImage = (req, res) => {
+    var dbo = db.get().db("matcha");
+    var query = { username: req.query.username};
+    dbo.collection("media").find(query).toArray((err, result) => {
+        if (result.length > 0)
+        {
+            // res.set('Content-Type', "image/jpeg");
+            res.send(result[0].data);
+        }
+        else {
+            res.sendStatus(404);
+        }
+    });
 }

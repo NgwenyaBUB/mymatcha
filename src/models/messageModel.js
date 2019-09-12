@@ -105,19 +105,16 @@ exports.getChat = (req, res) => {
                     allusers[iterator.username] = iterator;
                 }
             }
-            dbo.collection("media").find().toArray((err, result) => {
-                if (err) throw err;
-                for (const iterator of result) {
-                    mymedia[iterator.username] = iterator;
-                }
-                // console.log('userd', myusers[0].connected);
-                // console.log('media', mymedia);
-                db.close();
-                res.render('chat', { users: myusers.connected, media: mymedia, allusers: allusers });
+            // dbo.collection("media").find().toArray((err, result) => {
+            //     if (err) throw err;
+            //     for (const iterator of result) {
+            //         mymedia[iterator.username] = iterator;
+            //     }
+            //     db.close();
+                res.render('chat', { users: myusers.connected, allusers: allusers });
             });
         });
-    });
-    // res.render('chat');
+    // });
 }
 
 exports.sendEmail = (req, res, messages) => {

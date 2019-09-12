@@ -29,14 +29,14 @@
 		}
 
 		.footer {
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            color: black;
-            text-align: center;
-            background-color: white;
-        }
+			position: fixed;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+			color: black;
+			text-align: center;
+			background-color: white;
+		}
 	</style>
 	<title>User</title>
 </head>
@@ -129,8 +129,9 @@
 				<a class="waves-effect waves-light btn" id="thumbs_up" onclick="likeuser()"><%=liked %></a>
 				<a class="waves-effect waves-light btn <%=disabled %>" href="/chat"><i
 						class="material-icons right">message</i>Message</a>
-				<a class="waves-effect waves-light btn"><i class="material-icons right">block</i>Block</a>
-				<a class="waves-effect waves-light btn">Report</a>
+				<a class="waves-effect waves-light btn" id="block" onclick="blockuser()"><i
+						class="material-icons right">block</i>Block/Report</a>
+				<p id="blockstatus"><%if(blocklist.includes(user.username)) {%> blocked <% } %></p>
 			</div>
 			<div class="col s8" style="max-height: 100vh; overflow-y: scroll">
 				<div class="row ">
@@ -192,6 +193,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
 	<script>
+		var blocked= "<%= user.blocklist.includes(user.username) %>"
 		var user = '<%=liked%>';
 		var mylikes = [];
 		"<% for(var i=0; i < likes.length; i++) { %>"
@@ -204,6 +206,10 @@
 			tag: "<%=user.additional.tags[i]%>"
 		});
 		"<% } %>"
+
+		if ("<%=user.status %>" == "offline") {
+			$("#userstuff").append('<p>Last Seen: ' + new Date("<%=user.lastseen %>" * 1000) + '</p>');
+		}
 
 		function likepic(username, id) {
 			$.ajax({
@@ -290,11 +296,33 @@
 			}
 		}
 
-		$(window).on('load', function () {
-			if ("<%=user.status %>" == "offline") {
-				$("#userstuff").append('<p>Last Seen: ' + new Date("<%=user.lastseen %>" * 1000) + '</p>');
+		function blockuser() {
+			if (blocked) {
+				$.ajax({
+					type: 'GET',
+					url: '/unblockuser?username=<%=user.username %>',
+					success: function (data) {
+						console.log('Unblocked');
+					}
+				});
+				console.log('Unblocked');
+				$('#blockstatus').html(" ");
+				blocked = false;
+			} else {
+				$.ajax({
+					type: 'GET',
+					url: '/blockuser?username=<%=user.username %>',
+					success: function (data) {
+						console.log('blocked');
+					}
+				});
+				console.log('blocked');
+				$('#blockstatus').html("blocked");
+				blocked = true;
 			}
-		});
+		}
+
+
 		$('.chips').material_chip();
 		$('.chips-initial').material_chip({
 			data: tags,
@@ -303,12 +331,12 @@
 		$(".button-collapse").sideNav();
 	</script>
 	<div class="footer">
-			<div class="footer-copyright">
-				<div class="container">
-					© 2019 by bngweny
-				</div>
+		<div class="footer-copyright">
+			<div class="container">
+				© 2019 by bngweny
 			</div>
 		</div>
+	</div>
 </body>
 
 </html>

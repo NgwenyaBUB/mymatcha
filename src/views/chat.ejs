@@ -61,7 +61,7 @@
                     <div class="col s12">
                         <ul class="collection">
                             <li class="collection-item avatar">
-                                <img src="<%= media[users[i]].data%>" alt="" class="circle">
+                                <img src="" id="img<%= users[i]%>" alt="<%= users[i].username%>" class="circle">
                                 <span class="title"><%=users[i]%></span>
                                 <p><%=allusers[users[i]].status %><br>
                                     <%if(allusers[users[i]].status == "offline") {%>
@@ -241,6 +241,14 @@
         // }
 
         // $(document).ready(setInterval(polling, 3000));
+
+        "<% for(let i = 0; i < users.length; i++)  { %>"
+		$.ajax({
+			type: 'GET',
+			url: '/getPicture?username=<%=users[i]%>',
+			success: (data) => { console.log('read'); $("#img<%= users[i] %>").attr("src", data)}
+		})
+		"<% } %>"
     </script>
 
     <div class="footer">

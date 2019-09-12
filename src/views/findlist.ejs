@@ -13,7 +13,7 @@
 			margin: 0;
 			padding: 0;
 		}
-		
+
 		.footer {
 			position: fixed;
 			left: 0;
@@ -40,14 +40,15 @@
 				</ul>
 				<ul class="right hide-on-med-and-down">
 					<li><a href="/find">Find</a></li>
-					<li><a class="dropdown-button" href="#" data-activates="dropdown3">Notifications<span class="new badge">0</span></a></li>
+					<li><a class="dropdown-button" href="#" data-activates="dropdown3">Notifications<span
+								class="new badge">0</span></a></li>
 
 					<li><a href="/chat">Messages<span class="new badge">0</span></a></li>
 					<li><a class="dropdown-button" href="#!" data-activates="dropdown1">Settings<i
 								class="material-icons right">arrow_drop_down</i></a></li>
 				</ul>
 				<ul id="dropdown3" class="dropdown-content">
-						<li><a href="#!">Welcome to matcha</a></li>
+					<li><a href="#!">Welcome to matcha</a></li>
 				</ul>
 				<ul class="side-nav" id="mobile-demo">
 					<li><a href="/find">Find</a></li>
@@ -108,10 +109,11 @@
 				<ul class="collection">
 					<% for(var i=0; i < users.length; i++) { %>
 					<li class="collection-item avatar">
-						<img src="<%=media[users[i].username].data%>" alt="<%=users[i].username %>" class="circle">
+						<img src="" id="img<%=users[i].username %>" alt="<%=users[i].username %>" class="circle">
 						<span class="title"><%=users[i].username %></span>
 						<p><%=users[i].name %> <%=users[i].surname %><br>
-							gender: <%=users[i].additional.gender %> &nbsp; age: <%= (new Date(Date.now() - new Date(users[i].additional.dob).getTime()).getUTCFullYear() - 1970) %>
+							gender: <%=users[i].additional.gender %> &nbsp; age:
+							<%= (new Date(Date.now() - new Date(users[i].additional.dob).getTime()).getUTCFullYear() - 1970) %>
 						</p>
 						<p>Location: <%=users[i].additional.userlocation%></p>
 						<p>Fame Rating: <%=fame[users[i].username]%>%</p>
@@ -137,6 +139,13 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
 	<script>
+		"<% for(let i = 0; i < users.length; i++)  { %>"
+		$.ajax({
+			type: 'GET',
+			url: '/getPicture?username=<%=users[i].username%>',
+			success: (data) => { console.log('read'); $("#img<%= users[i].username %>").attr("src", data)}
+		})
+		"<% } %>"
 		$(".dropdown-button").dropdown();
 		$(".button-collapse").sideNav();
 	</script>

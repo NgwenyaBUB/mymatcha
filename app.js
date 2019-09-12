@@ -13,16 +13,18 @@ const bootstrap = require("./src/boostrap");
 const ejs = require('ejs');
 const session = require('express-session');
 
+var db = require('./src/databaseModel');
+
 //Use a Custom Templating Engine
 app.set("view engine", "ejs");
 
 app.set("views", path.resolve("./src/views"));
 
-app.use(session({secret: 'ssshhhhh', cookie: {secure: false}, resave: false,saveUninitialized: true}));
+app.use(session({ secret: 'ssshhhhh', cookie: { secure: false }, resave: false, saveUninitialized: true }));
 
 //Request Parsing
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 1000000 }));
 //Create Express Router
 const router = express.Router();
 app.use(router);
@@ -48,7 +50,15 @@ router.use((err, req, res, next) => {
   }
 });
 
-app.listen(PORT, err => {
-  if (err) return console.log(`Cannot Listen on PORT: ${PORT}`);
-  console.log(`Server is Listening on: http://localhost:${PORT}/`);
+
+db.connect('mongodb://bngweny:1am!w2k@ds117334.mlab.com:17334/matcha', (err) => {
+  if (err) {
+    console.log("cant conenct to DB");
+  }
+  else {
+    app.listen(PORT, err => {
+      if (err) return console.log(`Cannot Listen on PORT: ${PORT}`);
+      console.log(`Server is Listening on: http://localhost:${PORT}/`);
+    });
+  }
 });
