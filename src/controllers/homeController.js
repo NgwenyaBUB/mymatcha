@@ -116,3 +116,8 @@ exports.getHomePage = (req, res, next) => {
   exports.reset = (req, res, next) => {
     homeModel.checkReset(req, res);
   }
+
+  exports.homereset = (req, res, next) => {
+    req.session.username = req.body.username;
+    msgModel.resetPassword(req, res);
+  }

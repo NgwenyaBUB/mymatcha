@@ -77,32 +77,32 @@
 <body style="background-image: url('/img/back6.jpg'); background-size: cover; overflow: hidden;">
 	<div style="width: 100%; position: absolute; z-index: -1;  height: 100vh; background-color:  pink; opacity: 0.8;">
 		<nav role="navigation">
-			<div class="nav-wrapper container"><a id="logo-container" href="/home" class="brand-logo">MATCHA</a>
+			<div class="nav-wrapper container"><a id="logo-container" href="/home" class="brand-logo"> MATCHA</a>
 				<a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
 				<ul id="dropdown1" class="dropdown-content">
 					<li><a href="/profile">Profile</a></li>
-					<li><a href="#!">Reset Password</a></li>
+					<li><a href="/resetpassemail">Reset Password</a></li>
 					<li class="divider"></li>
 					<li><a href="/logout">Logout</a></li>
 				</ul>
 				<ul class="right hide-on-med-and-down">
 					<li><a href="/find">Find</a></li>
-					<li><a href="#">Notifications<span class="new badge">0</span></a></li>
-					<li><a href="/chat">Messages<span class="new badge">0</span></a></li>
+					<li><a class="modal-trigger" href="#modal1" id="notiflnk">Notifications<span class="new badge"
+								id="notif1">0</span></a></li>
+					<li><a href="/chat">Messages<span class="new badge" id="msg1">0</span></a></li>
 					<li><a class="dropdown-button" href="#!" data-activates="dropdown1">Settings<i
 								class="material-icons right">arrow_drop_down</i></a></li>
 				</ul>
 				<ul class="side-nav" id="mobile-demo">
 					<li><a href="/find">Find</a></li>
 					<li><a href="/profile">Profile</a></li>
-					<li><a href="#">Notifications<span class="new badge">0</span></a></li>
+					<li><a href="#">Notifications<span class="new badge" id="notif2">0</span></a></li>
 					<li><a href="#">Settings</a></li>
 				</ul>
 				<!-- <ul id="nav-mobile" class="sidenav">
 					
 				</ul> 
 				<a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a> -->
-
 			</div>
 		</nav>
 		<h1 style="text-align:center">Find</h1>
@@ -158,31 +158,6 @@
 			var geojson = {
 				type: 'FeatureCollection',
 				features: peoples
-				// 	[
-				// 		{
-				// 		type: 'Feature',
-				// 		geometry: {
-				// 			type: 'Point',
-				// 			coordinates: [18.417, -33.907]
-				// 		},
-				// 		properties: {
-				// 			title: 'Bae?',
-				// 			description: 'On my phone looking for a reason to get off my phone!'
-				// 		}
-				// 	},
-				// 	{
-				// 		type: 'Feature',
-				// 		geometry: {
-				// 			type: 'Point',
-				// 			coordinates: [-122.414, 37.776]
-				// 		},
-				// 		properties: {
-				// 			title: 'Mapbox',
-				// 			description: 'San Francisco, California'
-				// 		}
-				// 	}
-
-				// ]
 			};
 
 			geojson.features.forEach(function (marker) {
@@ -207,16 +182,98 @@
 			});
 		</script>
 	</div>
+	<!-- Modal Structure -->
+	<div id="modal1" class="modal bottom-sheet">
+		<div class="modal-content">
+			<h4>Notifications</h4>
+			<div class="row">
+				<ul class="collection" id="notif">
+				</ul>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a onclick="allNotifications()" class="modal-action waves-effect waves-green btn-flat">All
+				Notifications</a>
+			<a onclick="dismissModal()" class="modal-action modal-close waves-effect waves-green btn-flat">Dismiss</a>
+		</div>
+	</div>
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"
 		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="/js/materialize.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
 	<script>
-		$(".dropdown-button").dropdown();
+		$(".dropdown-button").dropdown({
+			hover: true
+		});
 		$(".button-collapse").sideNav();
 		$('.carousel.carousel-slider').carousel({ fullWidth: true });
+		$(document).ready(function () {
+			// the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+			$('.modal').modal();
+		});
+		var msgcount = '0';
+		function polling() {
+			$.ajax({
+				type: 'GET',
+				url: '/getNotifications',
+				success: function (data) {
+					// console.log("notifications", data);
+					$('#notif1').text(data + "");
+				}
+			});
+			$.ajax({
+				type: 'GET',
+				url: '/getMessageCount',
+				success: function (data) {
+					// console.log("msgcount", data);
+					if (data != msgcount) {
+						Materialize.toast('You have New Messages', 4000);
+						//only when there is a new message.. maybe keep track of the messages count and if theres a difference display
+					}
+					msgcount = data;
+					$('#msg1').text(data + "");
+				}
+			});
+		}
 
+		setInterval(polling, 3000);
+
+		function dismissModal() {
+			$.ajax({
+				type: 'GET',
+				url: '/readNotifications',
+				success: function (data) {
+					console.log("done");
+				}
+			});
+		}
+
+		$("#notiflnk").on("click", function () {
+			$.ajax({
+				type: 'GET',
+				url: '/notifications',
+				success: function (data) {
+					$("#notif").empty();
+					for (const iterator of data) {
+						$("#notif").append('<li class="collection-item">' + iterator.from + ' ' + iterator.type + ' on ' + new Date(iterator.timestamp * 1000) + '</li>');
+					}
+				}
+			});
+		});
+
+		function allNotifications() {
+			$.ajax({
+				type: 'GET',
+				url: '/allNotifications',
+				success: function (data) {
+					$("#notif").empty();
+					for (const iterator of data) {
+						$("#notif").append('<li class="collection-item">' + iterator.from + ' ' + iterator.type + ' on ' + new Date(iterator.timestamp * 1000) + '</li>');
+					}
+				}
+			});
+		}
 	</script>
 </body>
 
