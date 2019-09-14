@@ -111,9 +111,9 @@ exports.getChat = (req, res) => {
             //         mymedia[iterator.username] = iterator;
             //     }
             //     db.close();
-                res.render('chat', { users: myusers.connected, allusers: allusers });
-            });
+            res.render('chat', { users: myusers.connected, allusers: allusers });
         });
+    });
     // });
 }
 
@@ -155,24 +155,30 @@ exports.resetPassword = (req, res) => {
         var query = { username: req.session.username };
         let num = Math.trunc(Math.random() * 100000000000000000);
         dbo.collection("users").find(query).toArray((err, result1) => {
-            exports.sendEmail(req, res, {
-                to: result1[0].email,
-                subject: "Reset password",
-                text: "Click on this <a href=http://localhost:3000/reset?username=" + req.session.username + "&id=" + num + ">link</a> to complete your reset your password"
-            });
-
-            var newvalues = {
-                $set: {
-                    complete: num
-                }
-            }
-            dbo.collection("users").updateOne(query, newvalues, function (err, resp) {
-                if (err) throw err;
-                console.log(resp.result.nModified + " document(s) updated");
-                userModel.changeStatus(req.session.username, "offline");
+            if (result1.length < 1) {
                 req.session.username = "";
-                res.render('index', { error: "go to email to reset password" });
-            });
+                res.render('index', { error: "Username does not exist" });
+            }
+            else {
+                exports.sendEmail(req, res, {
+                    to: result1[0].email,
+                    subject: "Reset password",
+                    text: "Click on this <a href=http://localhost:3000/reset?username=" + req.session.username + "&id=" + num + ">link</a> to complete your reset your password"
+                });
+
+                var newvalues = {
+                    $set: {
+                        complete: num
+                    }
+                }
+                dbo.collection("users").updateOne(query, newvalues, function (err, resp) {
+                    if (err) throw err;
+                    console.log(resp.result.nModified + " document(s) updated");
+                    userModel.changeStatus(req.session.username, "offline");
+                    req.session.username = "";
+                    res.render('index', { error: "go to email to reset password" });
+                });
+            }
         })
     })
 } 

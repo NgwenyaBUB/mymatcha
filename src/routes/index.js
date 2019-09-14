@@ -54,4 +54,5 @@ exports.appRoute = router => {
   router.post("/completea", userController.complete);
   router.post("/updateprofile", userController.updateProfile);
   router.post("/updateadditional", userController.updateAdditional);
+  router.post("/forgotpassword", homeController.homereset);
 };

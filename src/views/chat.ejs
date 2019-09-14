@@ -25,34 +25,34 @@
 <body style="background-image: url('/img/back6.jpg');  background-size: cover; overflow: hidden;">
     <div style="width: 100%; position: absolute; z-index: -1;  height:100%; background-color:  pink; opacity: 0.8;">
         <nav role="navigation">
-            <div class="nav-wrapper container"><a id="logo-container" href="/home" class="brand-logo"> MATCHA</a>
-                <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-                <ul id="dropdown1" class="dropdown-content">
-                    <li><a href="/profile">Profile</a></li>
-                    <li><a href="#!">Reset Password</a></li>
-                    <li class="divider"></li>
-                    <li><a href="/logout">Logout</a></li>
-                </ul>
-                <ul class="right hide-on-med-and-down">
-                    <li><a href="/find">Find</a></li>
-                    <li><a href="#" id="notiflnk">Notifications<span class="new badge" id="notif1">0</span></a></li>
-                    <li><a href="/chat">Messages<span class="new badge" id="msg1">0</span></a></li>
-                    <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Settings<i
-                                class="material-icons right">arrow_drop_down</i></a></li>
-                </ul>
-                <ul class="side-nav" id="mobile-demo">
-                    <li><a href="/find">Find</a></li>
-                    <li><a href="/profile">Profile</a></li>
-                    <li><a href="#">Notifications<span class="new badge" id="notif2">0</span></a></li>
-                    <li><a href="#">Settings</a></li>
-                </ul>
-                <!-- <ul id="nav-mobile" class="sidenav">
-
+			<div class="nav-wrapper container"><a id="logo-container" href="/home" class="brand-logo"> MATCHA</a>
+				<a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+				<ul id="dropdown1" class="dropdown-content">
+					<li><a href="/profile">Profile</a></li>
+					<li><a href="/resetpassemail">Reset Password</a></li>
+					<li class="divider"></li>
+					<li><a href="/logout">Logout</a></li>
+				</ul>
+				<ul class="right hide-on-med-and-down">
+					<li><a href="/find">Find</a></li>
+					<li><a class="modal-trigger" href="#modal1" id="notiflnk">Notifications<span class="new badge"
+								id="notif1">0</span></a></li>
+					<li><a href="/chat">Messages<span class="new badge" id="msg1">0</span></a></li>
+					<li><a class="dropdown-button" href="#!" data-activates="dropdown1">Settings<i
+								class="material-icons right">arrow_drop_down</i></a></li>
+				</ul>
+				<ul class="side-nav" id="mobile-demo">
+					<li><a href="/find">Find</a></li>
+					<li><a href="/profile">Profile</a></li>
+					<li><a href="#">Notifications<span class="new badge" id="notif2">0</span></a></li>
+					<li><a href="#">Settings</a></li>
+				</ul>
+				<!-- <ul id="nav-mobile" class="sidenav">
+					
 				</ul> 
 				<a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a> -->
-
-            </div>
-        </nav>
+			</div>
+		</nav>
         <h1 style="text-align:center">Messages</h1>
         <div id="chat" class="row">
             <div class="col s4">
@@ -79,15 +79,6 @@
 
             <div class="col s7  red lighten-5" style="max-height: 800px; overflow-y: scroll;">
                 <div class="row" id="msgpanel">
-                    <!-- <div class="row">
-                    <div class="card-panel teal">
-                        <span class="white-text">I am a very simple card. I am good at containing small bits of
-                            information.
-                            I am convenient because I require little markup to use effectively. I am similar to what is
-                            called a panel in other frameworks.
-                        </span>
-                    </div>
-                </div> -->
                 </div>
                 <div class="row">
                     <div class="input-field col s8">
@@ -107,37 +98,35 @@
 
 
     </div>
-    <!-- <script src="http://localhost:80/jquery/jquery-3.1.1.js"></script> -->
-    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script> -->
+
+    <!-- Modal Structure -->
+	<div id="modal1" class="modal bottom-sheet">
+		<div class="modal-content">
+			<h4>Notifications</h4>
+			<div class="row">
+				<ul class="collection" id="notif">
+				</ul>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a onclick="allNotifications()" class="modal-action waves-effect waves-green btn-flat">All Notifications</a>
+			<a onclick="dismissModal()" class="modal-action modal-close waves-effect waves-green btn-flat">Dismiss</a>
+		</div>
+	</div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <!-- <script src="/js/materialize.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
     <script>
         var t;
         var user = "";
         var numMsgs = 0;
-        // 		(function($){
-        //   $(function(){
-
-        //     $('.sidenav').sidenav();
-
-        //   }); // end of document ready
-        // })(jQuery); // end of jQuery name space
-
-        // var instance = M.Carousel.init({
-        //     fullWidth: true
-        //   });
-
-        // Or with jQuery
-
-        // $('.carousel.carousel-slider').carousel({
-        //   fullWidth: true
-        // });
-        $(".dropdown-button").dropdown();
+        $(".dropdown-button").dropdown(
+            {
+                hover: true, // Activate on hover
+            }
+        );
         $(".button-collapse").sideNav();
 
         function addMessage(color, align, text) {
@@ -221,32 +210,32 @@
             }
         });
 
-        // function polling() {
-        //     $.ajax({
-        //         type: 'GET',
-        //         url: '/getNotifications',
-        //         success: function (data) {
-        //             // console.log("notifications", data);
-        //             $('#notif1').text(data + "");
-        //         }
-        //     });
-        //     $.ajax({
-        //         type: 'GET',
-        //         url: '/getMessageCount',
-        //         success: function (data) {
-        //             // console.log("msgcount", data);
-        //             $('#msg1').text(data + "");
-        //         }
-        //     });
-        // }
+        function polling() {
+            $.ajax({
+                type: 'GET',
+                url: '/getNotifications',
+                success: function (data) {
+                    // console.log("notifications", data);
+                    $('#notif1').text(data + "");
+                }
+            });
+            $.ajax({
+                type: 'GET',
+                url: '/getMessageCount',
+                success: function (data) {
+                    // console.log("msgcount", data);
+                    $('#msg1').text(data + "");
+                }
+            });
+        }
 
-        // $(document).ready(setInterval(polling, 3000));
+        $(document).ready(setInterval(polling, 3000));
 
         "<% for(let i = 0; i < users.length; i++)  { %>"
 		$.ajax({
 			type: 'GET',
 			url: '/getPicture?username=<%=users[i]%>',
-			success: (data) => { console.log('read'); $("#img<%= users[i] %>").attr("src", data)}
+			success: (data) => { $("#img<%= users[i] %>").attr("src", data)}
 		})
 		"<% } %>"
     </script>
